@@ -116,3 +116,16 @@ function colorToHex(color) {
     colors[3] = "0" + colors[3];
   return colors[0] + colors[1] + colors[2] + colors[3];
 }
+
+
+
+/**
+ * Pad the value with zeroes
+ * @param {number} num - Number to fill
+ * @size {number} size - Amount of digits
+**/
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}

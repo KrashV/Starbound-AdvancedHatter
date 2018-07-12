@@ -18,7 +18,7 @@
       <script src="scripts/script.js"></script>
       <script src="scripts/FileSaver.min.js"></script>
       <script src="scripts/drawables.js"></script>
-      <title>Hatter</title>
+      <title>Advanced Hatter</title>
    </head>
    <body>
       <!-- Content wrapper (mainly to set a different footer color) -->
@@ -34,9 +34,9 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                   </button>
-                  <a class="navbar-brand" href="https://github.com/Silverfeelin">
+                  <a class="navbar-brand" href="https://github.com/KrashV" target="_blank">
                   <i class="fa fa-github"></i>
-                  <span>Silverfeelin</span>
+                  <span>Degranon</span>
                   </a>
                </div>
                <!-- Navbar links -->
@@ -44,7 +44,7 @@
                   <ul class="nav navbar-nav">
                      <!-- li class="active" -->
                      <li>
-                        <a href="https://github.com/Silverfeelin/Starbound-Hatter">View project on GitHub</a>
+                        <a href="https://github.com/KrashV/Starbound-AdvancedHatter" target="_blank">View project on GitHub</a>
                      </li>
                   </ul>
                </div>
@@ -56,7 +56,7 @@
                <div class="container">
                   <h1>
                      <canvas id="logoHat"></canvas>
-                     Starbound Hatter
+                     Starbound Advanced Hatter
                   </h1>
                   <p>Multiplayer compatible custom hats!</p>
                </div>
@@ -67,11 +67,26 @@
             <div class="row" style="margin-top:-40px;">
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Options</h3>
-                  <label for="btnSelectImage">Select a hat (up to 85x85):</label><br>
-                  <button id="btnSelectImage" class="btn btn-default">Select Image</button>
-                  <label for="checkRemoveWhite">Remove white (#FFFFFFFF) from source:</label>
-                  <input id="checkRemoveWhite" type="checkbox">
-                  <input style="display:none;" id="selectImage" type="file" accept="image/*">
+				  <div class="input-group">
+                      <label for="frameSelect">Frame emote:</label>
+                      <select id="frameSelect" class="form-control">
+                        <option value="idle">Idle</option>
+                        <option value="closed">Blink</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="blabber">Blabber</option>
+                      </select>
+					  
+					  <div class="input-group-addon input-group-button">
+						  <label for="btnSelectImage">Select a frame:</label><br>
+						  <button id="btnSelectImage" class="btn btn-default">Select Frame</button>
+						  <input style="display:none;" id="selectImage" type="file" accept="image/*">
+					  </div>
+					  <div class="input-group-addon input-group-button">
+						  <label for="btnRemoveImage">Remove a frame:</label><br>
+						  <button id="btnRemoveImage" class="btn btn-default">Remove Frame</button>
+					  </div>
+				  </div>
                   <div class="form-group">
                      <label for="itemName">Item name:</label>
                      <input id="itemName" type="text" class="form-control" value="^orange;Custom Hat">
@@ -134,8 +149,7 @@
                <p><a href="http://playstarbound.com/">Official Starbound site</a></p>
                <hr>
                <div>
-                  <p style="float:left;"><a href="https://github.com/Silverfeelin/Starbound-Hatter/blob/master/credits.md">Credits and Licenses</a></p>
-                  <p style="float:right;">Contact me: <a href="mailto:silverfeelin@gmail.com">Silverfeelin@gmail.com</a></p>
+                  <p style="float:right;">Contact me: <a href="boba00099@gmail.com" target="_blank">boba00099@gmail.com</a></p>
                </div>
             </div>
          </div>

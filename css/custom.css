@@ -85,3 +85,9 @@ h1, h2, h3, h4, h5, h6 {
   -moz-user-select: none;
   user-select: none;
 }
+
+.input-group-button {
+    padding: 0 0 0 5px;
+    border-color: transparent;
+    background: none;
+}

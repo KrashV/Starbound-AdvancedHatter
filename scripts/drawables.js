@@ -1,11 +1,11 @@
 /**
- * Advanced Hatter (https://krashv.github.io/Starbound-AdvancedHatter/)
+ * Advanced Hatter (https://github.com/KrashV/Starbound-AdvancedHatter)
  * This work is licensed under a Creative Commons Attribution 3.0 Unported License.
  * https://creativecommons.org/licenses/by/3.0/
  */
 
-var drawableImage, imageCharacter, imageHair, previousHeight = 172;
-var autoCropFrame = false;
+var drawableImage, imageCharacter, imageHair;
+var emoteFrames = {};
 
 /**
  * On load
@@ -25,6 +25,12 @@ $(function() {
     this.value = "";
   });
 
+  // Bind remove image
+  $("#btnRemoveImage").click(function() {
+    emoteFrames[$("#frameSelect").val()] = null;
+	drawableLoaded(null);
+  });
+  
   // Bind generate output
   $("#btnPlainText").click(generatePlainText);
   $("#btnCommand").click(generateCommand);
@@ -49,6 +55,11 @@ $(function() {
       canvasHair.fadeOut(100);
     else
       canvasHair.fadeIn(100);
+  });
+  
+  // Bind frame selection
+  $("#frameSelect").change(function() {
+	drawableLoaded(emoteFrames[this.value]);
   });
 });
 
@@ -84,13 +95,13 @@ function loadFeatureLogo() {
  * @returns {boolean} Value indicating whether a drawable is selected or not.
  */
 function confirmDrawable(alertUser) {
-  if (drawableImage == null) {
-    if (alertUser)
-      alert("Please select a valid image first!");
 
-    return false;
+  if (emoteFrames["idle"] == null) {
+	  if (alertUser)
+		alert("Provide at least the image for idle.");
+	return false;
   } else
-    return true;
+	  return true;
 }
 
 /**
@@ -169,9 +180,9 @@ function readDrawableInput(input, callback) {
     var fr = new FileReader();
     fr.onload = function() {
       var img = new Image;
-      img.onload = callback;
-
+      img.onload = callback;	  
       img.src = this.result;
+	  emoteFrames[$("#frameSelect").val()] = img;
     };
     fr.readAsDataURL(file);
 
@@ -179,33 +190,19 @@ function readDrawableInput(input, callback) {
 }
 
 /**
- * Variable that can be set to true (in console) to avoid the dimension restrictions on the input image.
- * Note: You'll have to manually adjust the (scale and) crop directive. I could probably automate this, but the offsets seemed particularly random.
- */
-var avoidRestrictions = false;
-
-/**
  * Called when the selected drawable is loaded.
  * Validates the dimensions and renders the image on the preview.
  */
 function drawableLoaded() {
-  var image = this;
-  
-  autoCropFrame = (image.width == 86 && image.height == 215);
-  
-  if (!autoCropFrame && !avoidRestrictions && (image.height > 85 || image.width > 85)) {
-    var r = confirm("A dimension of the selected image exceeds 85 pixels.\nIt is highly discouraged you proceed and use this image, as it can easily cause performance issues for you and other players.\n\nDo you want to proceed using this image?");
-    
-    if (r != true)
-    {
-      drawableImage = null;
-      $("#selectImage").val('');
-      $("#cvsPreviewHat").fadeOut(100, function() {
-        clearCanvas($("#cvsPreviewHat").get(0));
-      });
+  var image = emoteFrames[$("#frameSelect").val()];
 
-      return;
-    }
+  if (image == null) {
+      $("#cvsPreviewHat").fadeOut(100, nextStep);
+	  return;
+  }
+  if (image.height != 43 || image.width != 43) {
+    alert("The image can be only 43x43");
+	return;
   }
   // Animate the preview update in three steps.
   var step = -1;
@@ -221,19 +218,10 @@ function drawableLoaded() {
     // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
     function() {
       drawableImage = image;
+	  emoteFrames[$("#frameSelect").val()] = image;
       clearCanvas($("#cvsPreviewHat").get(0));
-      var bot, lef;
-      if (!autoCropFrame) {
-        drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4);
-        bot = (86-drawableImage.height)*2,
-        lef = (86-drawableImage.width)*2;
-      } else {
-        console.log("a");
-        drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4, [43, 0], [43, 43]);
-        bot = 86;
-        lef = 86;
-      }
-        $("#cvsPreviewHat").animate({bottom: bot, left: lef}, 200, nextStep);
+      drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4);
+      $("#cvsPreviewHat").animate({bottom: 86, left: 86}, 200, nextStep);
     },
     // Step three: Fade in the new hat.
     function() {
@@ -255,7 +243,7 @@ function drawableLoaded() {
 function generatePlainText() {
 
   if (confirmDrawable(true)) {
-    var directives = generateDirectives(drawableImage, {setWhite : true, crop : autoCropFrame});
+    var directives = generateDirectives(emoteFrames["idle"]);
 
     var obj = { "count" : 1,
                "name" : "eyepatchhead",
@@ -269,6 +257,7 @@ function generatePlainText() {
                  mask : "mask.png",
                  maxStack : 1,
                  price : 0,
+				 advancedHatter: {},
                  rarity : "common",
                  shortdescription : "Custom Hat",
                  statusEffects : [],
@@ -287,6 +276,14 @@ function generatePlainText() {
       obj.parameters.mask = mask;
     }
 
+	for (var frame in emoteFrames) {
+		if (frame == "idle")
+			obj.parameters.advancedHatter[frame] = directives;
+		else {
+			var dir = generateDirectives(emoteFrames[frame]);
+			obj.parameters.advancedHatter[frame] = dir;
+		}
+	}
     var blob = new Blob([ JSON.stringify(obj, null, 2) ], {type: "text/plain;charset=utf8"});
     saveAs(blob, "CustomHat.json");
   }
@@ -298,7 +295,7 @@ function generatePlainText() {
 function generateCommand() {
 
   if (confirmDrawable(true)) {
-    var directives = generateDirectives(drawableImage, {setWhite : true, crop : autoCropFrame});
+    var directives = generateDirectives(drawableImage);
 
     var obj = {
                 directives : "",
@@ -310,6 +307,7 @@ function generateCommand() {
                 mask : "mask.png",
                 maxStack : 1,
                 price : 0,
+				advancedHatter: {},
                 rarity : "common",
                 shortdescription : "Custom Hat",
                 statusEffects : [],
@@ -327,7 +325,11 @@ function generateCommand() {
       var mask = "?submask=/items/armors/decorative/hats/eyepatch/mask.png";
       obj.mask = mask;
     }
-
+	
+	for (var frame in emoteFrames) {
+		var directives = generateDirectives(emoteFrames[frame]);
+		obj.parameters.advancedHatter[frame] = directives;
+	}
     // Escape quotes in JSON parameters to prevent early end of stream (since parameters are wrapped in ' in the chat processor).
     var cmd = "/spawnitem eyepatchhead 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
     
@@ -337,154 +339,45 @@ function generateCommand() {
 }
 
 /**
- * Creates and returns a two dimensional table containing all color values for the 'signplaceholder' asset.
- * @returns {object} Two dimensional array ([x][y]) containing integral color values formatted [R,G,B,A] for every pixel.
- */
-function getSignPlaceHolder() {
-  var colors = [];
-
-  for(var i = 0; i < 32; i++) {
-    colors[i] = [];
-    var x = i;
-
-    // Compensate for missing hexadecimal values (A/F).
-    if (i >= 9)
-      x += 6;
-    if (i >= 19)
-      x += 6;
-    if (i >= 29)
-      x += 6;
-
-    for (var j = 0; j < 8; j++) {
-      colors[i][j] = [x+1,0,j+1,1];
-    }
-  }
-
-  return colors;
-}
-
-/**
  * Generate and returns a directives string to form the given image.
  * Uses the blendmult on white pixels method to concatenate signplaceholder assets.
- * Supported imageOptions:
- * setWhite : true // Sets the base image white (including transparent pixels) before applying the image. Clears white pixels at the end of the directives.
- * crop : true // Crops a hat frame from a 86x215 source image (top right 43x43).
  * @param {object} image - Image to create directives for.
- * @param {object} [imageOptions] - JSON table containing supported image options.
  * @returns {string} Formatted directives string.
  */
-function generateDirectives(image, imageOptions) {
+function generateDirectives(image) {
   if (image == null)
     return;
 
-  if (imageOptions === undefined || imageOptions == null)
-    imageOptions = {};
-
-  var width = imageOptions.crop ? 43 : image.width,
-      height = imageOptions.crop ? 43 : image.height;
-  
-  // Fetch color codes for the signplaceholder asset.
-  var colors = getSignPlaceHolder();
-
   // Draw the selected image on a canvas, to fetch the pixel data.
   var canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = 43;
+  canvas.height = 43;
 
   var canvasContext = canvas.getContext("2d");
 
   // Flip image upside down, to compensate for the 'inverted' y axis.
-  if (!imageOptions.crop) {
-    canvasContext.translate(0, image.height);
-    canvasContext.scale(1,-1);
-    canvasContext.drawImage(image, 0, 0, width, height);
-    canvasContext.scale(1,1);
-  } else {
-    canvasContext.translate(0, 43);
-    canvasContext.scale(1,-1);
-    canvasContext.drawImage(image, 43, 0, 43, 43, 0, 0, 43, 43);
-    canvasContext.scale(1,1);
-  }
+  canvasContext.translate(0, image.height);
+  canvasContext.scale(1,-1);
+  canvasContext.drawImage(image, 0, 0, 43, 43);
+  canvasContext.scale(1,1);
   
-  var drawables = "";
-
-  // Set the source image white before starting.
-  if (imageOptions.hasOwnProperty('setWhite') && imageOptions.setWhite)
-    drawables = "?setcolor=ffffff?replace;00000000=ffffff;ffffff00=ffffff?setcolor=ffffff" + drawables;
-
-  // Scale and crop
-  var maxDimension = height > width ? height : width;
-  var scale = Math.ceil(maxDimension / 43);
-  drawables = drawables + "?scalenearest=" + scale + "?crop=0;0;" + width + ";" + height;
-
-  var drawableTemplate = "?blendmult=/objects/outpost/customsign/signplaceholder.png"
-
-  // Calculate amount of signplaceholder frames needed horizontally and vertically to form the image.
-  var frameCount = [
-    Math.ceil(width / 32),
-    Math.ceil(height / 8)
-  ];
-
-  // For every frame, create a new blendmult 'layer'.
-  for (var frameX = 0; frameX < frameCount[0]; frameX++) {
-    for (var frameY = 0; frameY < frameCount[1]; frameY++) {
-      var currentX = frameX * 32;
-      var currentY = frameY * 8;
-
-      var drawable = drawableTemplate;
-
-      drawable += ";" + (-frameX * 32) + ";" + (frameY * - 8) + "?replace";
-
-      var containsPixels = false;
-
-      var removeWhite = $("#checkRemoveWhite").get(0).checked;
-
-      // For every pixel of this frame, fetch it's color code.
-      for (var x = 0; x < 32; x++) {
-        for (var y = 0; y < 8; y++) {
-          // Raise Y now so we can safely continue when checks fail; remember to check y-1!
-          currentY++;
-
-          if (currentX > canvas.width - 1 || currentY-1 > canvas.height - 1)
-            continue;
-
-          var pixelC = canvasContext.getImageData(currentX, currentY-1, 1, 1).data;
-
-          if (pixelC[3] != 0)
-            containsPixels = true;
-
-          if (pixelC[0] == 255 && pixelC[1] == 255 && pixelC[2] == 255)
-          {
-            if (removeWhite && pixelC[3] == 255)
-            {
-              pixelC = [0,0,0,0];
-            }
-            else
-            {
-              pixelC[0] = 254;
-              pixelC[1] = 254;
-              pixelC[2] = 254;
-            }
-
-          }
-
-          drawable += ";" + colorToHex(colors[x][y]) + "=" + colorToHex(pixelC);
-        }
-
-        currentX++;
-        currentY = frameY * 8;
-      }
-
-      // If the current frame does not contain nay pixels, we don't have to add the layer.
-      if (containsPixels)
-        drawables += drawable;
-    }
-  }
-
-  // Finally, revert the setWhite.
-  if (imageOptions.hasOwnProperty('setWhite') && imageOptions.setWhite) {
-    drawables += "?replace;ffffffff=00000000";
-  }
-
+  var drawables = "?crop;0;0;2;2?replace;fff0=fff;0000=fff?setcolor=fff" +
+                "?blendmult=/objects/outpost/customsign/signplaceholder.png" +
+                "?replace;01000101=01000100;02000101=2B000100?replace;01000201=01002B00;02000201=2B002B00" +
+                "?scale=43?crop=0;0;43;43";
+				
+  drawables += "?replace";
+  
+	for (var x = 0; x < 43; x++)
+	{
+		for (var y = 0; y < 43; y++)
+		{
+			var pixelC = canvasContext.getImageData(x, y, 1, 1).data;
+			if (pixelC[3] == 0) 
+				continue;
+		
+			drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + colorToHex(pixelC);
+		}
+	}
   return drawables;
 }
