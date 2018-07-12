@@ -1,0 +1,8 @@
+{
+  "description" : "Add some functionality to your hats!",
+  "requires" : [],
+  "author" : "Degranon",
+  "version" : "1.0",
+  "friendlyName" : "Advanced Hatter",
+  "name" : "advancedhatter"
+}
