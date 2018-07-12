@@ -6,7 +6,6 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-      <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
       <meta name="description" content="Advanced Hatter for Starbound Vanilla animated hats">
       <link rel="image_src" href="imgs/hat.png">
       <link rel="shortcut icon" type="image/ico" href="favicon.ico">
@@ -24,7 +23,7 @@
       <!-- Content wrapper (mainly to set a different footer color) -->
       <div id="wrapper">
          <!-- Navigation -->
-         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                <!-- Logo and responsive toggle -->
                <div class="navbar-header">
@@ -44,7 +43,13 @@
                   <ul class="nav navbar-nav">
                      <!-- li class="active" -->
                      <li>
-                        <a href="https://github.com/KrashV/Starbound-AdvancedHatter" target="_blank">View project on GitHub</a>
+                        <a href="https://github.com/KrashV/Starbound-AdvancedHatter/tree/gh-pages" target="_blank">View project on GitHub</a>
+                     </li>
+                     <li>
+                        <a href="https://github.com/KrashV/Starbound-AdvancedHatter/tree/master" target="_blank">Download the mod</a>
+                     </li>
+                     <li>
+                        <a href="https://www.paypal.me/degranon" target="_blank">Donate</a>
                      </li>
                   </ul>
                </div>
@@ -58,7 +63,7 @@
                      <canvas id="logoHat"></canvas>
                      Starbound Advanced Hatter
                   </h1>
-                  <p>Multiplayer compatible custom hats!</p>
+                  <p>Multiplayer compatible custom animated hats!</p>
                </div>
             </div>
          </div>
@@ -72,19 +77,20 @@
                       <select id="frameSelect" class="form-control">
                         <option value="idle">Idle</option>
                         <option value="closed">Blink</option>
+                        <option value="blabber">Blabber</option>
                         <option value="happy">Happy</option>
                         <option value="sad">Sad</option>
-                        <option value="blabber">Blabber</option>
+						<option value="shout">Shout</option>
                       </select>
 					  
 					  <div class="input-group-addon input-group-button">
-						  <label for="btnSelectImage">Select a frame:</label><br>
-						  <button id="btnSelectImage" class="btn btn-default">Select Frame</button>
+						  <label for="btnSelectImage">Select frame:</label><br>
+						  <button id="btnSelectImage" class="btn btn-default">Select</button>
 						  <input style="display:none;" id="selectImage" type="file" accept="image/*">
 					  </div>
 					  <div class="input-group-addon input-group-button">
-						  <label for="btnRemoveImage">Remove a frame:</label><br>
-						  <button id="btnRemoveImage" class="btn btn-default">Remove Frame</button>
+						  <label for="btnRemoveImage">Remove frame:</label><br>
+						  <button id="btnRemoveImage" class="btn btn-default">Remove</button>
 					  </div>
 				  </div>
                   <div class="form-group">
@@ -122,15 +128,14 @@
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Examples</h3>
                   <p>An example of an advanced hat: idle, happy, blink and blabber emotions with asymmetrical support.</p>
-                  <img src="imgs/preview.gif">
+                  <img src="imgs/preview.gif" alt="Hat animation preview">
                </div>
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Make a Hat</h3>
                   <p>
                      Pretty much as <a href="https://silverfeelin.github.io/Starbound-Hatter/" target="_blank">Hatter</a>, Advanced Hatter requires a 43x43 image to work with. You can find the template below:
                   </p>
-                  <img style="vertical-align: top;" src="imgs/hatterHair.png">
-                  <img style="vertical-align: top;" src="imgs/hatterCharacter.png">
+                  <img style="vertical-align: top;" src="imgs/hatterCharacter.png"  alt="Hatter template">
                   <p>For Paint.NET users, <a href="imgs/hatterTemplate.pdn">this project file</a> can be used to easily create hats. Make sure you hide the character layer before saving the hat, and that you select the PNG file format!</p>
                </div>
             </div>
