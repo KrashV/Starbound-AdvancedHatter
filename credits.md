@@ -1,7 +1,8 @@
+<<<<<<< HEAD
 # Credits
 Thank you for making the Starbound Hatter possible!
 
-Special thanks to [Magicks](http://ilovebacons.com/members/magicks.3951/) for helping me figure out how to apply drawables to clothes.
+Special thanks to [Silverfeelin](https://github.com/Silverfeelin) for letting me using his Hatter template.
 
 ## Template
 The template the main page uses originates from [Quackit](http://www.quackit.com/), and can be found [here](http://www.quackit.com/html/templates/corporate_website_templates.cfm).
@@ -15,3 +16,22 @@ Resource | License
 [FileSaver.js](https://github.com/eligrey/FileSaver.js/) | [View](https://github.com/Silverfeelin/Starbound-Hatter/blob/master/licenses/FILESAVERJS)
 [Font Awesome](http://fontawesome.io/) | [View](http://fontawesome.io/license/)
 [jQuery](https://jquery.com/) | [View](https://github.com/Silverfeelin/Starbound-Hatter/blob/master/licenses/JQUERY)
+=======
+# Credits
+Thank you for making the Starbound Advanced Hatter possible!
+
+Special thanks to [Silverfeelin](https://github.com/Silverfeelin) for letting me using his Hatter template.
+
+## Template
+The template the main page uses originates from [Quackit](http://www.quackit.com/), and can be found [here](http://www.quackit.com/html/templates/corporate_website_templates.cfm).
+
+## Resources
+The Starbound Advanced Hatter also uses the following resources to function the way it does. You can view the official page and the license for each listing by opening the corresponding hyperlinks.
+
+Resource | License
+--- | ---
+[Bootstrap](http://getbootstrap.com/) | [View](https://github.com/Silverfeelin/Starbound-Hatter/blob/master/licenses/BOOTSTRAP)
+[FileSaver.js](https://github.com/eligrey/FileSaver.js/) | [View](https://github.com/Silverfeelin/Starbound-Hatter/blob/master/licenses/FILESAVERJS)
+[Font Awesome](http://fontawesome.io/) | [View](http://fontawesome.io/license/)
+[jQuery](https://jquery.com/) | [View](https://github.com/Silverfeelin/Starbound-Hatter/blob/master/licenses/JQUERY)
+>>>>>>> e91349b33b4e66ad3e48d5640072468ad1b62b82
