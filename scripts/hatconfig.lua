@@ -23,10 +23,15 @@ init = function()
 	neutral = "neutral",
 	laugh = "laugh"
   }
+  
+  self.blinkTimer = 0.3
+  self.blinkTime = 0
 end
 
 update = function(dt)
 	if oldHatterUpdate then oldHatterUpdate(dt) end
+	
+	self.blinkTime = math.max(0, self.blinkTime - dt)
 	
 	-- Retrieve current parameters --
 	local currentEmote = getEmote()
@@ -42,29 +47,51 @@ update = function(dt)
 		end
 	end
 	
-	if currentDirection ~= self.previousDirection or currentEmote ~= self.previousEmote then
-		self.previousEmote = currentEmote
-		self.previousDirection = currentDirection
+	
+	self.currentHat = player.equippedItem(self.slotName)
+	
+	if not self.currentHat then
+		self.slotName = "head"
 		self.currentHat = player.equippedItem(self.slotName)
-		
-		if not self.currentHat then
-			self.slotName = "head"
-			self.currentHat = player.equippedItem(self.slotName)
-		end
-		
-		if self.currentHat and self.currentHat.parameters.advancedHatter and self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]] then
+	end
+	
+	if self.currentHat and self.currentHat.parameters.advancedHatter and self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]] then
+		if currentDirection ~= self.previousDirection or currentEmote ~= self.previousEmote then
+			
 			if type(self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]) == "table" then
 				if currentDirection > 0 then
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]][1]
+					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]].default
 				else
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]][2]
+					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]].reverse
 				end
 			else
 				self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]
 			end
 			player.setEquippedItem(self.slotName, self.currentHat)
+			
+			-- Blink time handler
+			if currentEmote == "blink" and self.previousEmote ~= currentEmote then
+				self.blinkTime = self.blinkTimer
+			end
+			
+			self.previousEmote = currentEmote
+			self.previousDirection = currentDirection
+		elseif currentEmote == "blink" and self.blinkTime <= 0 then
+			if type(self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]) == "table" then
+				if currentDirection > 0 then
+					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]].default
+				else
+					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]].reverse
+				end
+			else
+				self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]]
+			end
+			player.setEquippedItem(self.slotName, self.currentHat)
 		end
 	end
+	
+	sb.setLogMap("Emote", currentEmote)
+	sb.setLogMap("BlinkTimer", self.blinkTime)
 end
 
 uninit = function()
