@@ -328,7 +328,7 @@ function generateCommand() {
 	
 	for (var frame in emoteFrames) {
 		var directives = generateDirectives(emoteFrames[frame]);
-		obj.parameters.advancedHatter[frame] = directives;
+		obj.advancedHatter[frame] = directives;
 	}
     // Escape quotes in JSON parameters to prevent early end of stream (since parameters are wrapped in ' in the chat processor).
     var cmd = "/spawnitem eyepatchhead 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
