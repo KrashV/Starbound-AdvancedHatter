@@ -106,12 +106,15 @@ $(function() {
 	
 	drawableLoaded(emoteSelect[this.value]["1"]);
 	clearCanvas($("#cvsPreviewEmote").get(0));
-	imageEmote.src = "imgs/emotes/" + this.value + ".png";
+    imageEmote.src = "imgs/emotes/" + this.value + "1.png";
   });
   
   // Bind frame selection
   $("#frameSelect").change(function() {
-	  drawableLoaded(emoteSelect[$("#emoteSelect").val()][this.value]);
+	  var emote = $("#emoteSelect").val();
+	  drawableLoaded(emoteSelect[emote][this.value]);
+	  clearCanvas($("#cvsPreviewEmote").get(0));
+	  imageEmote.src = "imgs/emotes/" + emote + this.value + ".png";
   }
   );
 });
