@@ -5,7 +5,35 @@
  */
 
 var drawableImage;
-var emoteFrames = {};
+var emoteSelect = {
+	idle: {},
+	closed: {},
+	blabber: {},
+	wink: {},
+	happy: {},
+	sad: {},
+	shout: {},
+	laugh: {},
+	surprised: {},
+	shocked: {},
+	neutral: {},
+	annoyed: {}
+};
+
+var emoteFrames = {
+	idle: 1,
+	closed: 1,
+	blabber: 2,
+	wink: 4,
+	happy: 2,
+	sad: 5,
+	shout: 2,
+	laugh: 2,
+	surprised: 2,
+	shocked: 3,
+	neutral: 2,
+	annoyed: 2
+};
 
 /**
  * On load
@@ -27,7 +55,7 @@ $(function() {
 
   // Bind remove image
   $("#btnRemoveImage").click(function() {
-    emoteFrames[$("#emoteSelect").val()] = null;
+    emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = null;
 	drawableLoaded(null);
   });
   
@@ -63,12 +91,29 @@ $(function() {
       canvasHair.fadeIn(100);
   });
   
-  // Bind frame selection
+  // Bind emote selection
   $("#emoteSelect").change(function() {
-	drawableLoaded(emoteFrames[this.value]);
+    var select = document.getElementById("frameSelect");
+    var limit = emoteFrames[this.value];
+	
+	$("#frameSelect").empty();
+    for (var i = 1; i <= limit; i++) {
+        var el = document.createElement("option");
+        el.textContent = i;
+        el.value = i;
+        select.appendChild(el);
+    }
+	
+	drawableLoaded(emoteSelect[this.value]["1"]);
 	clearCanvas($("#cvsPreviewEmote").get(0));
 	imageEmote.src = "imgs/emotes/" + this.value + ".png";
   });
+  
+  // Bind frame selection
+  $("#frameSelect").change(function() {
+	  drawableLoaded(emoteSelect[$("#emoteSelect").val()][this.value]);
+  }
+  );
 });
 
 /**
@@ -104,7 +149,7 @@ function loadFeatureLogo() {
  */
 function confirmDrawable(alertUser) {
 
-  if (emoteFrames["idle"] == null) {
+  if (emoteSelect["idle"]["1"] == null) {
 	  if (alertUser)
 		alert("Provide at least the image for idle.");
 	return false;
@@ -190,7 +235,7 @@ function readDrawableInput(input, callback) {
       var img = new Image;
       img.onload = callback;	  
       img.src = this.result;
-	  emoteFrames[$("#emoteSelect").val()] = img;
+	  emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = img;
     };
     fr.readAsDataURL(file);
 
@@ -202,7 +247,7 @@ function readDrawableInput(input, callback) {
  * Validates the dimensions and renders the image on the preview.
  */
 function drawableLoaded() {
-  var image = emoteFrames[$("#emoteSelect").val()];
+  var image = emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()];
 
   if (image == null) {
       $("#cvsPreviewHat").fadeOut(100, nextStep);
@@ -226,7 +271,7 @@ function drawableLoaded() {
     // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
     function() {
       drawableImage = image;
-	  emoteFrames[$("#emoteSelect").val()] = image;
+	  emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = image;
       clearCanvas($("#cvsPreviewHat").get(0));
       drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4);
       $("#cvsPreviewHat").animate({bottom: 86, left: 86}, 200, nextStep);
@@ -251,7 +296,7 @@ function drawableLoaded() {
 function generatePlainText() {
 
   if (confirmDrawable(true)) {
-    var directives = generateDirectives(emoteFrames["idle"]);
+    var directives = generateDirectives(emoteSelect["idle"]["1"]);
 
     var obj = { "count" : 1,
                "name" : "eyepatchhead",
@@ -284,16 +329,20 @@ function generatePlainText() {
       obj.parameters.mask = mask;
     }
 
-	for (var frame in emoteFrames) {
-		if (frame == "idle")
-			obj.parameters.advancedHatter[frame] = directives;
-		else {
-			var dir = generateDirectives(emoteFrames[frame]);
-			obj.parameters.advancedHatter[frame] = dir;
+	for (var emote in emoteSelect) {
+		if (emote == "idle")
+			obj.parameters.advancedHatter[emote] = [directives];
+		else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
+			obj.parameters.advancedHatter[emote] = [];
+			for (var frame in emoteSelect[emote]) {
+				alert(frame);
+				var dir = generateDirectives(emoteSelect[emote][frame]);
+				obj.parameters.advancedHatter[emote].push(dir);
+			}
 		}
 	}
     var blob = new Blob([ JSON.stringify(obj, null, 2) ], {type: "text/plain;charset=utf8"});
-    saveAs(blob, "CustomHat.json");
+    saveAs(blob, "CustomAnimatedHat.json");
   }
 }
 
@@ -303,7 +352,7 @@ function generatePlainText() {
 function generateCommand() {
 
   if (confirmDrawable(true)) {
-    var directives = generateDirectives(drawableImage);
+    var directives = generateDirectives(emoteSelect["idle"]["1"]);
 
     var obj = {
                 directives : "",
@@ -334,9 +383,17 @@ function generateCommand() {
       obj.mask = mask;
     }
 	
-	for (var frame in emoteFrames) {
-		var directives = generateDirectives(emoteFrames[frame]);
-		obj.advancedHatter[frame] = directives;
+	for (var emote in emoteSelect) {
+		if (emote == "idle")
+			obj.advancedHatter[emote] = [directives];
+		else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
+			obj.advancedHatter[emote] = [];
+			for (var frame in emoteSelect[emote]) {
+				alert(frame);
+				var dir = generateDirectives(emoteSelect[emote][frame]);
+				obj.advancedHatter[emote].push(dir);
+			}
+		}
 	}
     // Escape quotes in JSON parameters to prevent early end of stream (since parameters are wrapped in ' in the chat processor).
     var cmd = "/spawnitem eyepatchhead 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
