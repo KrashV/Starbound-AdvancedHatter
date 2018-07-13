@@ -433,15 +433,20 @@ function generateDirectives(image) {
 				
   drawables += "?replace";
   
+  var imageData = canvasContext.getImageData(0, 0, 43, 43).data;
+  
 	for (var x = 0; x < 43; x++)
 	{
 		for (var y = 0; y < 43; y++)
 		{
-			var pixelC = canvasContext.getImageData(x, y, 1, 1).data;
-			if (pixelC[3] == 0) 
+			var R = imageData[x * 4 + y * 43 * 4];
+			var G = imageData[x * 4 + y * 43 * 4 + 1];
+			var B = imageData[x * 4 + y * 43 * 4 + 2];
+			var A = imageData[x * 4 + y * 43 * 4 + 3];
+			if (A == 0) 
 				continue;
 		
-			drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + colorToHex(pixelC);
+			drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + pad(R.toString(16), 2) + pad(G.toString(16), 2) + pad(B.toString(16), 2);
 		}
 	}
   return drawables;
