@@ -399,7 +399,7 @@ function generateCommand() {
     var cmd = "/spawnitem eyepatchhead 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
     
     var blob = new Blob([ cmd ], {type: "text/plain;charset=utf8"});
-    saveAs(blob, "CustomHatCommand.txt");
+    saveAs(blob, "CustomAnimatedHatCommand.txt");
   }
 }
 
