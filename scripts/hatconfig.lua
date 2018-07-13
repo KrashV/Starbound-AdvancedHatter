@@ -11,7 +11,7 @@ init = function()
   
   self.slotName = "headCosmetic"
   
-  self.hatModes = {
+  self.emotes = {
 	idle = "idle",
 	blink = "closed",
 	wink = "wink",
@@ -21,20 +21,22 @@ init = function()
 	blabber = "blabber",
 	shout = "shout",
 	neutral = "neutral",
-	laugh = "laugh"
+	annoyed = "annoyed",
+	laugh = "laugh",
+	oh = "surprised",
+	oooh = "shocked",
+	eat = "shout"
   }
   
-  self.blinkTimer = 0.3
-  self.blinkTime = 0
+  self.aliases = root.assetJson("/humanoid/emote.frames").aliases
 end
 
 update = function(dt)
 	if oldHatterUpdate then oldHatterUpdate(dt) end
 	
-	self.blinkTime = math.max(0, self.blinkTime - dt)
-	
 	-- Retrieve current parameters --
-	local currentEmote = getEmote()
+	local currentEmoteFrame = getEmote()
+	local currentEmote = currentEmoteFrame:match("[^%d%W]+")
 	local currentPosition = entity.position()
 	local currentDirection = self.previousDirection
 	
@@ -47,7 +49,7 @@ update = function(dt)
 		end
 	end
 	
-	
+	self.slotName = "headCosmetic"
 	self.currentHat = player.equippedItem(self.slotName)
 	
 	if not self.currentHat then
@@ -55,43 +57,17 @@ update = function(dt)
 		self.currentHat = player.equippedItem(self.slotName)
 	end
 	
-	if self.currentHat and self.currentHat.parameters.advancedHatter and self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]] then
-		if currentDirection ~= self.previousDirection or currentEmote ~= self.previousEmote then
-			
-			if type(self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]) == "table" then
-				if currentDirection > 0 then
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]].default
-				else
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]].reverse
-				end
-			else
-				self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]
-			end
+	if self.currentHat and self.currentHat.parameters.advancedHatter and self.currentHat.parameters.advancedHatter[self.emotes[currentEmote]] then
+		if currentDirection ~= self.previousDirection or currentEmoteFrame ~= self.previousEmote then
+			self.currentHat.parameters.directives = getFrame(currentDirection, currentEmoteFrame)
 			player.setEquippedItem(self.slotName, self.currentHat)
 			
-			-- Blink time handler
-			if currentEmote == "blink" and self.previousEmote ~= currentEmote then
-				self.blinkTime = self.blinkTimer
-			end
-			
-			self.previousEmote = currentEmote
+			self.previousEmote = currentEmoteFrame
 			self.previousDirection = currentDirection
-		elseif currentEmote == "blink" and self.blinkTime <= 0 then
-			if type(self.currentHat.parameters.advancedHatter[self.hatModes[currentEmote]]) == "table" then
-				if currentDirection > 0 then
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]].default
-				else
-					self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]].reverse
-				end
-			else
-				self.currentHat.parameters.directives = self.currentHat.parameters.advancedHatter[self.hatModes["idle"]]
-			end
-			player.setEquippedItem(self.slotName, self.currentHat)
 		end
 	end
 	
-	sb.setLogMap("Emote", currentEmote)
-	sb.setLogMap("BlinkTimer", self.blinkTime)
+	sb.setLogMap("Emote", currentEmoteFrame)
 end
 
 uninit = function()
@@ -104,11 +80,37 @@ function getEmote()
 	local emote = "idle"
 	for _, v in pairs(portrait) do
 		if string.find(v.image, "/emote.png") then
-			emote = string.match(v.image, "%:%w+%.")
-			emote = string.gsub(emote, "[%:%.]", "")
+			emote = string.match(v.image, "%/humanoid%/%w+%/emote.png:%w+%.+%d+"):gsub("%/humanoid%/%w+%/emote.png:", "")
 			break
 		end
 	end
 	
 	return emote
+end
+
+function getFrame(direction, emoteFrame)
+	local directives = ""
+	
+	-- Check for aliases
+	if self.aliases[emoteFrame] then
+		emoteFrame = self.aliases[emoteFrame]
+	end
+	
+	local emote = emoteFrame:match("[^%d%W]+")
+	local frame = tonumber(emoteFrame:match("%d+"))
+	
+	-- Out of border check
+	frame = math.min(frame, #self.currentHat.parameters.advancedHatter[self.emotes[emote]])
+	
+	if type(self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame]) == "table" then
+		if direction > 0 then
+			directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame].default
+		else
+			directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame].reverse
+		end
+	else
+		directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame]
+	end
+
+	return directives
 end
