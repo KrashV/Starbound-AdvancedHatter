@@ -338,7 +338,6 @@ function generatePlainText() {
 		else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
 			obj.parameters.advancedHatter[emote] = [];
 			for (var frame in emoteSelect[emote]) {
-				alert(frame);
 				var dir = generateDirectives(emoteSelect[emote][frame]);
 				obj.parameters.advancedHatter[emote].push(dir);
 			}
