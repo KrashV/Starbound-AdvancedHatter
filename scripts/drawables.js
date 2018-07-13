@@ -4,7 +4,7 @@
  * https://creativecommons.org/licenses/by/3.0/
  */
 
-var drawableImage, imageCharacter, imageHair;
+var drawableImage;
 var emoteFrames = {};
 
 /**
@@ -36,17 +36,23 @@ $(function() {
   $("#btnCommand").click(generateCommand);
 
   // Load preview
-  imageCharacter = new Image();
+  var imageCharacter = new Image();
   imageCharacter.onload = function() {
     drawResizedImage($("#cvsPreviewCharacter").get(0), imageCharacter, 4);
   };
   imageCharacter.src = "imgs/hatterCharacter.png";
 
-  imageHair = new Image();
+  var imageHair = new Image();
   imageHair.onload = function() {
     drawResizedImage($("#cvsPreviewHair").get(0), imageHair, 4);
   };
   imageHair.src = "imgs/hatterHair.png";
+  
+  var imageEmote = new Image();
+  imageEmote.onload = function() {
+	  drawResizedImage($("#cvsPreviewEmote").get(0), imageEmote, 4);
+  };
+  imageEmote.src = "imgs/emotes/idle.png";
 
   // Bind hair mask
   $("#checkMask").change(function() {
@@ -60,6 +66,8 @@ $(function() {
   // Bind frame selection
   $("#frameSelect").change(function() {
 	drawableLoaded(emoteFrames[this.value]);
+	clearCanvas($("#cvsPreviewEmote").get(0));
+	imageEmote.src = "imgs/emotes/" + this.value + ".png";
   });
 });
 
