@@ -389,7 +389,6 @@ function generateCommand() {
 		else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
 			obj.advancedHatter[emote] = [];
 			for (var frame in emoteSelect[emote]) {
-				alert(frame);
 				var dir = generateDirectives(emoteSelect[emote][frame]);
 				obj.advancedHatter[emote].push(dir);
 			}
