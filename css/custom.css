@@ -87,7 +87,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input-group-button {
-    padding: 0 0 0 5px;
+    padding: 5px 0 0 5px;
+    border-color: transparent;
+    background: none;
+}
+
+.input-group-select {
+    padding: 5px 0 0 5px;
     border-color: transparent;
     background: none;
 }

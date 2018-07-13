@@ -73,8 +73,8 @@
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Options</h3>
 				  <div class="input-group">
-                      <label for="frameSelect">Emote:</label>
-                      <select id="frameSelect" class="form-control">
+                      <label for="emoteSelect">Emote:</label>
+                      <select id="emoteSelect" class="form-control" style="max-width:90%;">
                         <option value="idle">Idle</option>
                         <option value="closed">Blink / Sleep</option>
                         <option value="blabber">Blabber</option>
@@ -88,6 +88,13 @@
 						<option value="annoyed">Annoyed</option>
 						<option value="neutral">Neutral</option>
                       </select>
+					  
+					  <div class="input-group-addon input-group-select">
+						  <label for="frameSelect" style="margin-left:-50%;">Frame:</label>
+						  <select id="frameSelect" class="form-control" style="margin-left:-50%; width:150%;">
+							<option value="1">1</option>
+						  </select>
+					  </div>
 					  
 					  <div class="input-group-addon input-group-button">
 						  <label for="btnSelectImage">Select frame:</label><br>

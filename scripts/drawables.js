@@ -27,7 +27,7 @@ $(function() {
 
   // Bind remove image
   $("#btnRemoveImage").click(function() {
-    emoteFrames[$("#frameSelect").val()] = null;
+    emoteFrames[$("#emoteSelect").val()] = null;
 	drawableLoaded(null);
   });
   
@@ -64,7 +64,7 @@ $(function() {
   });
   
   // Bind frame selection
-  $("#frameSelect").change(function() {
+  $("#emoteSelect").change(function() {
 	drawableLoaded(emoteFrames[this.value]);
 	clearCanvas($("#cvsPreviewEmote").get(0));
 	imageEmote.src = "imgs/emotes/" + this.value + ".png";
@@ -190,7 +190,7 @@ function readDrawableInput(input, callback) {
       var img = new Image;
       img.onload = callback;	  
       img.src = this.result;
-	  emoteFrames[$("#frameSelect").val()] = img;
+	  emoteFrames[$("#emoteSelect").val()] = img;
     };
     fr.readAsDataURL(file);
 
@@ -202,7 +202,7 @@ function readDrawableInput(input, callback) {
  * Validates the dimensions and renders the image on the preview.
  */
 function drawableLoaded() {
-  var image = emoteFrames[$("#frameSelect").val()];
+  var image = emoteFrames[$("#emoteSelect").val()];
 
   if (image == null) {
       $("#cvsPreviewHat").fadeOut(100, nextStep);
@@ -226,7 +226,7 @@ function drawableLoaded() {
     // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
     function() {
       drawableImage = image;
-	  emoteFrames[$("#frameSelect").val()] = image;
+	  emoteFrames[$("#emoteSelect").val()] = image;
       clearCanvas($("#cvsPreviewHat").get(0));
       drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4);
       $("#cvsPreviewHat").animate({bottom: 86, left: 86}, 200, nextStep);
