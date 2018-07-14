@@ -99,6 +99,9 @@ function getFrame(direction, emoteFrame)
 	local emote = emoteFrame:match("[^%d%W]+")
 	local frame = tonumber(emoteFrame:match("%d+"))
 	
+	-- Bugfix
+	if not frame then frame = 1 end
+	
 	-- Out of border check
 	frame = math.min(frame, #self.currentHat.parameters.advancedHatter[self.emotes[emote]])
 	
