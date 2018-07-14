@@ -447,7 +447,7 @@ function generateDirectives(image) {
 			if (A == 0) 
 				continue;
 		
-			drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + pad(R.toString(16), 2) + pad(G.toString(16), 2) + pad(B.toString(16), 2);
+			drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + colorToHex([R, G, B, A]);
 		}
 	}
   return drawables;
