@@ -4,7 +4,6 @@
  * https://creativecommons.org/licenses/by/3.0/
  */
 
-var drawableImage;
 var emoteSelect = {
 	idle: {},
 	closed: {},
@@ -59,7 +58,6 @@ $(function() {
   });
 
   $("#selectImage").change(function() {
-    drawableImage = null;
     readDrawableInput(this, drawableLoaded, false);
     this.value = "";
   });
@@ -70,7 +68,6 @@ $(function() {
   });
   
   $("#selectSpritesheet").change(function() {
-    drawableImage = null;
     readDrawableInput(this, spritesheetLoaded, true);
     this.value = "";
   });
@@ -78,7 +75,7 @@ $(function() {
   // Bind remove image
   $("#btnRemoveImage").click(function() {
     emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = null;
-	drawableLoaded(null);
+	drawableLoaded();
   });
   
   // Bind generate output
@@ -276,12 +273,12 @@ function readDrawableInput(input, callback, isSpritesheet) {
 function drawableLoaded() {
   var image = emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()];
 
-  if (image == null) {
+  if (image == null || image.width == 0 || image.height == 0) {
       $("#cvsPreviewHat").fadeOut(100, nextStep);
 	  return;
   }
   if (image.height != 43 || image.width != 43) {
-    alert("The image can be only 43x43");
+    alert("The image can be only 43x43, now" + image.height);
 	return;
   }
   // Animate the preview update in three steps.
@@ -297,11 +294,10 @@ function drawableLoaded() {
     },
     // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
     function() {
-      drawableImage = image;
 	  emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = image;
       clearCanvas($("#cvsPreviewHat").get(0));
-      drawResizedImage($("#cvsPreviewHat").get(0), drawableImage, 4);
-      $("#cvsPreviewHat").animate({bottom: 86, left: 86}, 200, nextStep);
+      drawResizedImage($("#cvsPreviewHat").get(0), image, 4);
+      $("#cvsPreviewHat").animate({bottom: 86, left: 86}, 100, nextStep);
     },
     // Step three: Fade in the new hat.
     function() {
@@ -346,7 +342,10 @@ function drawableLoaded() {
 		  }
 	  }
   }
-  $("#frameSelect").trigger("change");
+  
+  var image = new Image;
+  image.onload = drawableLoaded;
+  image.src = emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()].src;
  }
  
  
