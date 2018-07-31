@@ -35,6 +35,17 @@ var emoteFrames = {
 	annoyed: 2
 };
 
+var sheetPieces = [
+      [ null, ["blabber", "1"], ["blabber", "2"], null, ["shout", "1"], ["shout", "2"], null, null, null ],
+      [ null, ["happy", "1"], ["happy", "2"], null, null, null, null, ["idle", "1"], null ],
+      [ null, ["sad", "1"], ["sad", "2"], ["sad", "3"], ["sad", "4"], ["sad", "5"], null, null, null ],
+      [ null, ["neutral", "1"], ["neutral", "2"], null, ["laugh", "1"], ["laugh", "2"], null, null, null ],
+      [ null, ["annoyed", "1"], ["annoyed", "2"], null, null, null, null, null, null ],
+      [ null, ["surprised", "1"], ["surprised", "2"], null, ["shocked", "1"], ["shocked", "2"], ["shocked", "3"], null, null ],
+      [ null, null, null, null, null, null, null, null, null ],
+      [ null, ["closed", "1"], null, null, ["wink", "1"], ["wink", "2"], ["wink", "3"], ["wink", "4"], null ]
+];
+
 /**
  * On load
  */
@@ -49,10 +60,21 @@ $(function() {
 
   $("#selectImage").change(function() {
     drawableImage = null;
-    readDrawableInput(this, drawableLoaded);
+    readDrawableInput(this, drawableLoaded, false);
     this.value = "";
   });
 
+  // Bind import spritesheet
+  $("#btnImportShriteSheet").click(function() {
+	$("#selectSpritesheet").trigger("click");
+  });
+  
+  $("#selectSpritesheet").change(function() {
+    drawableImage = null;
+    readDrawableInput(this, spritesheetLoaded, true);
+    this.value = "";
+  });
+  
   // Bind remove image
   $("#btnRemoveImage").click(function() {
     emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = null;
@@ -104,7 +126,7 @@ $(function() {
         select.appendChild(el);
     }
 	
-	drawableLoaded(emoteSelect[this.value]["1"]);
+	drawableLoaded();
 	clearCanvas($("#cvsPreviewEmote").get(0));
     imageEmote.src = "imgs/emotes/" + this.value + "1.png";
   });
@@ -112,7 +134,7 @@ $(function() {
   // Bind frame selection
   $("#frameSelect").change(function() {
 	  var emote = $("#emoteSelect").val();
-	  drawableLoaded(emoteSelect[emote][this.value]);
+	  drawableLoaded();
 	  clearCanvas($("#cvsPreviewEmote").get(0));
 	  imageEmote.src = "imgs/emotes/" + emote + this.value + ".png";
   }
@@ -226,8 +248,9 @@ function drawResizedImage(canvas, image, scale, srcStart, srcSize, destStart, de
  * Reads the first file of the given input, and sets it's onload function to the given callback.
  * @param {object} input - File input DOM element with an image file selected.
  * @param {function} callback - Image onload function.
+ * @param {boolean} isSpritesheet - Checks whether the spritesheet or single image is loaded
  */
-function readDrawableInput(input, callback) {
+function readDrawableInput(input, callback, isSpritesheet) {
 
   if (input.files && input.files.length > 0) {
     // Use first file. By default, users shouldn't be able to select multiple files.
@@ -238,7 +261,8 @@ function readDrawableInput(input, callback) {
       var img = new Image;
       img.onload = callback;	  
       img.src = this.result;
-	  emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = img;
+	  if (!isSpritesheet)
+		emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = img;
     };
     fr.readAsDataURL(file);
 
@@ -293,6 +317,39 @@ function drawableLoaded() {
   nextStep();
 }
 
+/**
+ * Called when the spritesheet is loaded.
+ * Validates the dimensions and fills the images
+ */
+ function spritesheetLoaded() {
+  var sheet = this;
+	 
+  if (sheet == null)
+	  return;
+  
+  if (sheet.height != 344 || sheet.width != 387) {
+    alert("The sheet can be only 387x344");
+	return;
+  }
+  
+  for (var x = 0; x < sheetPieces.length; ++x) {
+	  for (var y = 0; y < sheetPieces[x].length; ++y) {
+		  if (sheetPieces[x][y] != null) {
+			  var canvas = document.createElement("canvas");
+			  canvas.width = 43;
+			  canvas.height = 43;
+			  var context = canvas.getContext("2d");
+			  context.drawImage(sheet, y * 43, x * 43, 43, 43, 0, 0, canvas.width, canvas.height);
+			  var img = new Image;
+			  img.src = canvas.toDataURL();
+			  emoteSelect[sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
+		  }
+	  }
+  }
+  $("#frameSelect").trigger("change");
+ }
+ 
+ 
 /**
  * Generates a hat export for the current image, and starts a download for it.
  */
