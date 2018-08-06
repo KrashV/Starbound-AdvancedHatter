@@ -129,3 +129,13 @@ function pad(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
 }
+
+/**
+ * Shows the current alert
+ * @param {string} alertId - Alert Id
+ **/
+function showAlert(alertId) {
+	$(alertId).fadeTo(2000, 500).slideUp(500, function(){
+		$(alertId).slideUp(500);
+	});
+}

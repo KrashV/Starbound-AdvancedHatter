@@ -7,12 +7,12 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
       <meta name="description" content="Advanced Hatter for Starbound Vanilla animated hats">
-	  <meta property="og:image" content="https://i.imgur.com/UHpdlsy.png" />
-	  <meta property="og:site_name" content="GitHub" />
-	  <meta property="og:type" content="object" />
-	  <meta property="og:title" content="Advanced Hatter" />
-	  <meta property="og:url" content="https://krashv.github.io/Starbound-AdvancedHatter/" />
-	  <meta property="og:description" content="Make your custom hats animated!" />
+      <meta property="og:image" content="https://i.imgur.com/UHpdlsy.png" />
+      <meta property="og:site_name" content="GitHub" />
+      <meta property="og:type" content="object" />
+      <meta property="og:title" content="Advanced Hatter" />
+      <meta property="og:url" content="https://krashv.github.io/Starbound-AdvancedHatter/" />
+      <meta property="og:description" content="Make your custom hats animated!" />
       <link rel="image_src" href="imgs/hat.png">
       <link rel="shortcut icon" type="image/ico" href="favicon.ico">
       <meta property="og:image" content="imgs/hat.png" />
@@ -73,45 +73,85 @@
                </div>
             </div>
          </div>
+         <!-- Alerts -->
+         <div class="alert alert-success" id="success-alert">
+            Generated successfully!
+         </div>
+         <div class="alert alert-warning" id="warning-dimension-frame">
+            The sprite dimenstions must be 43x43px
+         </div>
+         <div class="alert alert-warning" id="warning-dimension-sheet">
+            The spritesheet dimesnions must be 387x344
+         </div>
+         <div class="alert alert-danger" id="warning-empty-frame">
+            Could not find idle image
+         </div>
+         <div class="alert alert-danger" id="warning-empty-sheet">
+            Emote spritesheet is not loaded
+         </div>
+         <!-- Modal -->
+         <div id="raceSelectModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+               <!-- Modal content-->
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Select the race</h4>
+                  </div>
+                  <div class="modal-body">
+                     <select id="raceSelect" class="form-control">
+                        <option value="human" selected>Human</option>
+                        <option value="avian" disabled>Avian</option>
+                        <option value="apex" disabled>Apex</option>
+                        <option value="floran" disabled>Floran</option>
+                        <option value="hylotl" disabled>Hylotl</option>
+                        <option value="glitch" disabled>Glitch</option>
+                        <option value="novakid" disabled>Novakid</option>
+                     </select>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal" id="racechoose">Choose</button>
+                  </div>
+               </div>
+            </div>
+         </div>
          <!-- Content -->
          <div class="container">
             <div class="row" style="margin-top:-40px;">
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Options</h3>
-				  <div class="input-group">
-                      <label for="emoteSelect">Emote:</label>
-                      <select id="emoteSelect" class="form-control" autocomplete="off">
+                  <div class="input-group">
+                     <label for="emoteSelect">Emote:</label>
+                     <select id="emoteSelect" class="form-control" autocomplete="off">
                         <option value="idle">Idle</option>
                         <option value="closed">Blink / Sleep</option>
                         <option value="blabber">Blabber</option>
-						<option value="wink">Wink</option>
+                        <option value="wink">Wink</option>
                         <option value="happy">Happy</option>
                         <option value="sad">Sad</option>
-						<option value="shout">Shout / Eat</option>
-						<option value="laugh">Laugh</option>
-						<option value="surprised">Surprised</option>
-						<option value="shocked">Shocked</option>
-						<option value="annoyed">Annoyed</option>
-						<option value="neutral">Neutral</option>
-                      </select>
-					  
-					  <div class="input-group-addon input-group-select">
-						  <label for="frameSelect">Frame:</label>
-						  <select id="frameSelect" class="form-control" style="width:120%;">
-							<option value="1">1</option>
-						  </select>
-					  </div>
-					  
-					  <div class="input-group-addon input-group-button">
-						  <label for="btnSelectImage">Select frame:</label><br>
-						  <button id="btnSelectImage" class="btn btn-default">Select</button>
-						  <input style="display:none;" id="selectImage" type="file" accept="image/*">
-					  </div>
-					  <div class="input-group-addon input-group-button">
-						  <label for="btnRemoveImage">Remove frame:</label><br>
-						  <button id="btnRemoveImage" class="btn btn-default">Remove</button>
-					  </div>
-				  </div>
+                        <option value="shout">Shout / Eat</option>
+                        <option value="laugh">Laugh</option>
+                        <option value="surprised">Surprised</option>
+                        <option value="shocked">Shocked</option>
+                        <option value="annoyed">Annoyed</option>
+                        <option value="neutral">Neutral</option>
+                     </select>
+                     <div class="input-group-addon input-group-select">
+                        <label for="frameSelect">Frame:</label>
+                        <select id="frameSelect" class="form-control" style="width:120%;">
+                           <option value="1">1</option>
+                        </select>
+                     </div>
+                     <div class="input-group-addon input-group-button">
+                        <label for="btnSelectImage">Select frame:</label><br>
+                        <button id="btnSelectImage" class="btn btn-default">Select</button>
+                        <input style="display:none;" id="selectImage" type="file" accept="image/*">
+                     </div>
+                     <div class="input-group-addon input-group-button">
+                        <label for="btnRemoveImage">Remove frame:</label><br>
+                        <button id="btnRemoveImage" class="btn btn-default">Remove</button>
+                     </div>
+                  </div>
                   <div class="form-group">
                      <label for="itemName">Item name:</label>
                      <input id="itemName" type="text" class="form-control" value="^cyan;Animated Hat">
@@ -130,17 +170,18 @@
                   <input id="checkMask" type="checkbox">
                   <br><br>
                   <div class="form-group">
-					 <button id="btnImportShriteSheet" class="btn btn-info">Import spritesheet</button>
-					 <input style="display:none;" id="selectSpritesheet" type="file" accept="image/*">
+                     <button id="btnImportShriteSheet" class="btn btn-info">Import spritesheet</button>
+                     <input style="display:none;" id="selectSpritesheet" type="file" accept="image/*">
                      <button id="btnPlainText" class="btn btn-success">Generate Item File</button>
                      <button id="btnCommand" class="btn btn-success">Generate Command File</button>
+                     <button id="btnDirective" class="btn btn-warning">Generate emoteDirective File</button>
                   </div>
                </div>
                <div class="col-md-6">
                   <h3 class="content-header">Preview</h3>
                   <div id="cvsPreview" style="position:relative;width:344px;height:344px;">
                      <canvas class="cvsPreview" width="172" height="172" style="height:172px; width:172px;z-index:0;position:absolute;left:86px;bottom:86px;" id="cvsPreviewCharacter"></canvas>
-					 <canvas class="cvsPreview" width="172" height="172" style="position:absolute;left:86px;bottom:86px;height:172px; width:172px; z-index:1;" id="cvsPreviewEmote"></canvas>
+                     <canvas class="cvsPreview" width="172" height="172" style="position:absolute;left:86px;bottom:86px;height:172px; width:172px; z-index:1;" id="cvsPreviewEmote"></canvas>
                      <canvas class="cvsPreview" width="172" height="172" style="position:absolute;left:86px;bottom:86px;height:172px; width:172px; z-index:2;" id="cvsPreviewHair"></canvas>
                      <canvas class="cvsPreview" width="172" height="172" style="position:absolute;left:0px;bottom:0px;height:172px; width:172px; z-index:3;" id="cvsPreviewHat"></canvas>
                   </div>
@@ -151,6 +192,7 @@
                   <h3 class="content-header">Examples</h3>
                   <p>An example of an advanced hat: idle, happy, blink and blabber emotions with asymmetry support.</p>
                   <img src="imgs/preview.gif" alt="Hat animation preview">
+				  <p>There is an option to create the emote directives for your character. Use it only if you know what you are doing.
                </div>
                <div class="col-md-6" style="z-index:3;">
                   <h3 class="content-header">Make a Hat</h3>
@@ -159,10 +201,10 @@
                   </p>
                   <img style="vertical-align: top;" src="imgs/hatterCharacter.png"  alt="Hatter template">
                   <p>For Paint.NET users, <a href="imgs/hatterTemplate.pdn">this project file</a> can be used to easily create hats. Make sure you hide the character layer before saving the hat, and that you select the PNG file format!</p>
-				  <p>For creating the animation, select the desired emote and a frame. You can always create a static emotion (even if it supports animation) by setting the first frame only.</p>
-				  <p>You can also import a spritesheet directly, download the template below:</p>
-				  <img style="vertical-align: top;" src="imgs/emote.png"  alt="Emote template">
-				  <p>Again, for Paint.NET users, <a href="imgs/emoteTemplate.pdn">this project file</a> can be used to easily create the hat. Make sure you hide the template layer before saving the hat, and that you select the PNG file format!</p>
+                  <p>For creating the animation, select the desired emote and a frame. You can always create a static emotion (even if it supports animation) by setting the first frame only.</p>
+                  <p>You can also import a spritesheet directly, download the template below:</p>
+                  <img style="vertical-align: top;" src="imgs/emote.png"  alt="Emote template">
+                  <p>Again, for Paint.NET users, <a href="imgs/emoteTemplate.pdn">this project file</a> can be used to easily create the hat. Make sure you hide the template layer before saving the hat, and that you select the PNG file format!</p>
                </div>
             </div>
          </div>
