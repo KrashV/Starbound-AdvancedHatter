@@ -513,10 +513,6 @@ function getImageData(source, callback) {
         canvas.height = this.naturalHeight;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
-		var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
-
-
-		window.location.href=img; // it will save locally
         // Return the image data
         callback(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
     };
