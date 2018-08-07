@@ -5,7 +5,7 @@
  */
 var emoteSelect = {
     idle: {},
-    closed: {},
+    blink: {},
     blabber: {},
     wink: {},
     happy: {},
@@ -20,7 +20,7 @@ var emoteSelect = {
 
 var emoteFrames = {
     idle: 1,
-    closed: 1,
+    blink: 2,
     blabber: 2,
     wink: 4,
     happy: 2,
@@ -34,37 +34,14 @@ var emoteFrames = {
 };
 
 var sheetPieces = [
-    [null, ["blabber", "1"],
-        ["blabber", "2"], null, ["shout", "1"],
-        ["shout", "2"], null, null, null
-    ],
-    [null, ["happy", "1"],
-        ["happy", "2"], null, null, null, null, ["idle", "1"], null
-    ],
-    [null, ["sad", "1"],
-        ["sad", "2"],
-        ["sad", "3"],
-        ["sad", "4"],
-        ["sad", "5"], null, null, null
-    ],
-    [null, ["neutral", "1"],
-        ["neutral", "2"], null, ["laugh", "1"],
-        ["laugh", "2"], null, null, null
-    ],
-    [null, ["annoyed", "1"],
-        ["annoyed", "2"], null, null, null, null, null, null
-    ],
-    [null, ["surprised", "1"],
-        ["surprised", "2"], null, ["shocked", "1"],
-        ["shocked", "2"],
-        ["shocked", "3"], null, null
-    ],
+    [null, ["blabber", "1"], ["blabber", "2"], null, ["shout", "1"], ["shout", "2"], null, null, null],
+    [null, ["happy", "1"], ["happy", "2"], null, null, null, null, ["idle", "1"], null],
+    [null, ["sad", "1"], ["sad", "2"], ["sad", "3"], ["sad", "4"], ["sad", "5"], null, null, null],
+    [null, ["neutral", "1"], ["neutral", "2"], null, ["laugh", "1"], ["laugh", "2"], null, null, null],
+    [null, ["annoyed", "1"], ["annoyed", "2"], null, null, null, null, null, null],
+    [null, ["surprised", "1"], ["surprised", "2"], null, ["shocked", "1"], ["shocked", "2"], ["shocked", "3"], null, null],
     [null, null, null, null, null, null, null, null, null],
-    [null, ["closed", "1"], null, null, ["wink", "1"],
-        ["wink", "2"],
-        ["wink", "3"],
-        ["wink", "4"], null
-    ]
+    [null, ["blink", "1"], ["blink", "2"], null, ["wink", "1"], ["wink", "2"], ["wink", "3"], ["wink", "4"], null]
 ];
 
 var sheetImported = false;
@@ -513,7 +490,7 @@ function generateEmoteDirectiveFile() {
         return;
     }
 
-    getImageData('imgs/templates/human.png', function(templateImageData) {
+    getImageData('imgs/templates/' + $('#raceSelect').val() + '.bmp', function(templateImageData) {
         var directive = generateEmoteDirective(templateImageData);
         var blob = new Blob([directive], {
             type: "text/plain;charset=utf8"
@@ -534,9 +511,12 @@ function getImageData(source, callback) {
         var canvas = document.createElement('canvas');
         canvas.width = this.naturalWidth;
         canvas.height = this.naturalHeight;
-
         var ctx = canvas.getContext('2d');
         ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+		var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+
+
+		window.location.href=img; // it will save locally
         // Return the image data
         callback(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
     };
@@ -617,8 +597,10 @@ function generateEmoteDirective(templateData) {
         "?multiply=2eff2e00?scale=47?crop;1;1;44;44";
 
     directive += "?replace";
+
     for (var px = 0, ct = canvas.width * canvas.height * 4; px < ct; px += 4) {
         var frame = sheetPieces[Math.floor(px / 4 / 43 / 43 / 9)][Math.floor(px / 4 / 43 % 9)];
+		
         if (frame != null) {
             var r = imageData[px];
             var g = imageData[px + 1];
@@ -630,9 +612,10 @@ function generateEmoteDirective(templateData) {
             var tb = templateData[px + 2];
             var ta = templateData[px + 3];
 
-            if (a != 0 && (r != tr || g != tg || b != tb))
+            if (a != 0 && (r != tr || g != tg || b != tb)) {
                 directive += ";" + colorToHex([tr, tg, tb, 0]) + "=" + colorToHex([r, g, b, a]);
-        }
+			}
+		}
     }
 
     return directive;
