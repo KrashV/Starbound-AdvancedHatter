@@ -13,10 +13,10 @@ init = function()
   
   self.emotes = {
 	idle = "idle",
-	blink = "closed",
+	blink = "blink",
 	wink = "wink",
 	happy = "happy",
-	sleep = "closed",
+	sleep = "blink",
 	sad = "sad",
 	blabber = "blabber",
 	shout = "shout",
