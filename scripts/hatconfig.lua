@@ -37,17 +37,7 @@ update = function(dt)
 	-- Retrieve current parameters --
 	local currentEmoteFrame = getEmote()
 	local currentEmote = currentEmoteFrame:match("[^%d%W]+")
-	local currentPosition = entity.position()
-	local currentDirection = self.previousDirection
-	
-	if currentPosition ~= self.previousPosition then -- Yes, yet anouther dirty workaround
-		local hDiff = currentPosition[1] - self.previousPosition[1] 
-		
-		if hDiff ~= 0 then
-			currentDirection = hDiff == math.abs(hDiff) and 1 or -1
-			self.previousPosition = currentPosition
-		end
-	end
+	local currentDirection = world.sendEntityMessage(entity.id(), "getActorDirection"):result()
 	
 	self.slotName = "headCosmetic"
 	self.currentHat = player.equippedItem(self.slotName)
