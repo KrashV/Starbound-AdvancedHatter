@@ -52,7 +52,7 @@ var speciesDirectives = {
 		"c2765430=00d200;cc8b621f=00e100;c57d5811=00e200;c278551f=00e300;bf6e5041=00e400;bd684c58=00e500;" + 
 		"ead1bd00=00f100;e6c8b714=00f200;ddb4a224=00f300;d39d8c40=00f400;d49e8c40=00f500;f0dfd924=00f600" + 
 		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" + 
-		"?multiply=2eff2e?scale=47?crop;1;1;44;44",
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44",
 	apex: "?crop;17;21;27;31?scale=0.7?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" +
 		"?replace;574d451c=00a100;5f463e32=00a200;855f572c=00a300;986f6a4d=00a400;3a37431c=00a500;" + 
 		"84262a32=00a600;59586500=00a700;48484b35=00b100;95282b06=00b200;9e282906=00b300;9e262805=00b400;" + 
@@ -60,7 +60,14 @@ var speciesDirectives = {
 		"96424032=00d200;7d574c5e=00e100;a15b4b5c=00e200;9e4d3f5e=00e300;9c554683=00e400;92564883=00e500;" +
 		"3f3d4a00=00f100;963b3041=00f200;942d2933=00f300;8a2e2c4f=00f400;6134374f=00f500;64616533=00f600" +
 		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
-		"?multiply=2eff2e?scale=47?crop;1;1;44;44"
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44",
+	floran: "?crop;17;21;27;31?scale=0.7?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" +
+		"?replace;9f4d351c=00a100;7f302232=00a200;7b312226=00a300;84332447=00a400;9c48301c=00a500;78281b32=00a600;" + 
+		"e9d4cc00=00a700;9a553b27=00b100;6c2c1e06=00b200;6c2d1e06=00b300;6d2b1d05=00b400;6d2a1b03=00b500;9c493016=00c100;" + 
+		"7427191c=00c200;7f2e1e50=00c300;852f205d=00c400;9c49301a=00d100;75281925=00d200;9c49301d=00e100;7129190f=00e200;" + 
+		"7328191d=00e300;7d2a1d3f=00e400;862e2056=00e500;d3b2a500=00f100;c6a79d1d=00f200;bc92882b=00f300;b37b7147=00f400;" + 
+		"b57d7347=00f500;edd9d42b=00f600?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff" + 
+		"?blendscreen=/ships/apex/apexT3blocks.png;-1;0?multiply=2eff2e00?scale=47?crop;1;1;44;44"
 };
 var sheetImported = false;
 var spritesheet;
