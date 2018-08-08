@@ -44,6 +44,24 @@ var sheetPieces = [
     [null, ["blink", "1"], ["blink", "2"], null, ["wink", "1"], ["wink", "2"], ["wink", "3"], ["wink", "4"], null]
 ];
 
+var speciesDirectives = {
+	human: "?crop;17;21;27;31?scale=0.7?replace;af8e7529=0000ff?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" + 
+		"?replace;cc8c651c=00a100;c1735432=00a200;c57d5a26=00a300;c2735547=00a400;ca88611c=00a500;" + 
+		"bf6e4f32=00a600;ffffff00=00a700;ca996f1d=00b100;c2825e06=00b200;a56a752a=00b300;c2825d05=00b400;" + 
+		"c3815c03=00b500;cc8b6216=00c100;c174531c=00c200;c0705046=00c300;c06e505d=00c400;cc8b621e=00d100;" + 
+		"c2765430=00d200;cc8b621f=00e100;c57d5811=00e200;c278551f=00e300;bf6e5041=00e400;bd684c58=00e500;" + 
+		"ead1bd00=00f100;e6c8b714=00f200;ddb4a224=00f300;d39d8c40=00f400;d49e8c40=00f500;f0dfd924=00f600" + 
+		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" + 
+		"?multiply=2eff2e?scale=47?crop;1;1;44;44",
+	apex: "?crop;17;21;27;31?scale=0.7?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" +
+		"?replace;574d451c=00a100;5f463e32=00a200;855f572c=00a300;986f6a4d=00a400;3a37431c=00a500;" + 
+		"84262a32=00a600;59586500=00a700;48484b35=00b100;95282b06=00b200;9e282906=00b300;9e262805=00b400;" + 
+		"9e252603=00b500;3a374316=00c100;8a26291c=00c200;883c3374=00c300;935a48a6=00c400;4f4d5716=00d100;" +
+		"96424032=00d200;7d574c5e=00e100;a15b4b5c=00e200;9e4d3f5e=00e300;9c554683=00e400;92564883=00e500;" +
+		"3f3d4a00=00f100;963b3041=00f200;942d2933=00f300;8a2e2c4f=00f400;6134374f=00f500;64616533=00f600" +
+		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
+		"?multiply=2eff2e?scale=47?crop;1;1;44;44"
+};
 var sheetImported = false;
 var spritesheet;
 
@@ -490,8 +508,8 @@ function generateEmoteDirectiveFile() {
         return;
     }
 
-    getImageData('imgs/templates/' + $('#raceSelect').val() + '.bmp', function(templateImageData) {
-        var directive = generateEmoteDirective(templateImageData);
+    getImageData('imgs/templates/emote.bmp', function(templateImageData) {
+        var directive = generateEmoteDirective($('#raceSelect').val(), templateImageData);
         var blob = new Blob([directive], {
             type: "text/plain;charset=utf8"
         });
@@ -572,7 +590,7 @@ function generateDirectives(image) {
  * @param {ImageData} templateData - ImageData of the template
  * @returns {string} Formatted directives string.
  */
-function generateEmoteDirective(templateData) {
+function generateEmoteDirective(race, templateData) {
 
     // Draw the selected image on a canvas, to fetch the pixel data.
     var canvas = document.createElement("canvas");
@@ -583,14 +601,7 @@ function generateEmoteDirective(templateData) {
     canvasContext.drawImage(spritesheet, 0, 0);
     var imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height).data;
 
-    var directive = "?crop;17;21;27;31?scale=0.7?replace;af8e75=0000ff?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" +
-        "?replace;cc8c651c=00a100;c1735432=00a200;c57d5a26=00a300;c2735547=00a400;ca88611c=00a500;bf6e4f32=00a600;" +
-        "ffffff00=00a700;ca996f1d=00b100;c2825e06=00b200;c2825e06=00b300;c2825d05=00b400;c3815c03=00b500;" +
-        "cc8b6216=00c100;c174531c=00c200;c0705046=00c300;c06e505d=00c400;cc8b621e=00d100;c2765430=00d200;" +
-        "cc8b621f=00e100;c57d5811=00e200;c278551f=00e300;bf6e5041=00e400;bd684c58=00e500;ead1bd00=00f100;" +
-        "e6c8b714=00f200;ddb4a224=00f300;d39d8c40=00f400;d49e8c40=00f500;f0dfd924=00f600?scale=2" +
-        "?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
-        "?multiply=2eff2e00?scale=47?crop;1;1;44;44";
+    var directive = speciesDirectives[race];
 
     directive += "?replace";
 
