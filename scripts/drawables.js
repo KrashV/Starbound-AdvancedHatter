@@ -67,7 +67,28 @@ var speciesDirectives = {
 		"7427191c=00c200;7f2e1e50=00c300;852f205d=00c400;9c49301a=00d100;75281925=00d200;9c49301d=00e100;7129190f=00e200;" + 
 		"7328191d=00e300;7d2a1d3f=00e400;862e2056=00e500;d3b2a500=00f100;c6a79d1d=00f200;bc92882b=00f300;b37b7147=00f400;" + 
 		"b57d7347=00f500;edd9d42b=00f600?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff" + 
-		"?blendscreen=/ships/apex/apexT3blocks.png;-1;0?multiply=2eff2e00?scale=47?crop;1;1;44;44"
+		"?blendscreen=/ships/apex/apexT3blocks.png;-1;0?multiply=2eff2e00?scale=47?crop;1;1;44;44",
+	hylotl: "?crop;17;21;27;31?scale=0.7?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" + 
+		"?replace;9c4c351c=00a100;792e2132=00a200;78302126=00a300;82342547=00a400;98472f1c=00a500;" +
+		"73261932=00a600;804d4600=00a700;9a553b27=00b100;6c2c1e06=00b200;6c2d1e06=00b300;6d2b1d05=00b400;" +
+		"722e1e03=00b500;7025191f=00c200;8233216b=00c300;85352267=00c400;98472f2b=00d100;73281a2e=00d200;" + 
+		"9a4b3030=00e100;752d1c23=00e200;6f261917=00e300;792b1c37=00e400;9d442e4e=00e500;74352900=00f100;" +
+		"77281e27=00f200;76261d2b=00f300;7c281e47=00f400;85342547=00f500;7a47422b=00f600?scale=2" +
+		"?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44",
+	glitch: "?crop;17;21;27;31?scale=0.7?replace;7062420a=0000ff?scale=0.7?scale=0.7?scale=0.9" + 
+		"?crop;2;1;3;2?replace;8e7e6200=00a100;8d7c5f10=00a200;93785c2c=00a300;9976592f=00a400;86573347=00a500;" + 
+		"84543047=00a600;ffffff00=00a700;77634235=00b100;5e505c2c=00b200;70603e06=00b300;715f3d05=00b400;715f3c03=00b500;" + 
+		"74603d25=00c100;85533025=00c200;735e3a00=00c300;785b3734=00c400;74603d16=00d100;7b633d32=00d200;765f3c28=00e100;" +
+		"7a583528=00e200;755d3928=00e300;dab9ab39=00e500;c2b9aa00=00f100;c1b8a810=00f200;c1b8a800=00f300;c1b8a80d=00f400;" +
+		"efece90d=00f500?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44",
+	avian: "?crop;17;21;27;31?scale=0.7?replace;c2f1ff4e=0000ff?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" + 
+		"?replace;f5ece71d=00a100;f7eee81d=00a200;fdfcfb02=00a300;fefdfd01=00a400;f5ebe61f=00a500;f7eee81e=00a600;" + 
+		"ffffff00=00a700;f9fafa08=00b100;f5f5fc0a=00b200;fbfbfc05=00b300;f8fafc08=00b400;f9fbfc06=00b500;fdfcfb04=00c100;" + 
+		"fbf7f50b=00c200;f8eee721=00c400;f9f4f30d=00d200;fcfaf906=00e200;f8f2ee14=00f300;f8f1ed15=00f400" + 
+		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44"
 };
 var sheetImported = false;
 var spritesheet;
@@ -116,9 +137,28 @@ $(function() {
         $('#raceSelectModal').modal('show');
     });
 
-    $('#racechoose').click(generateEmoteDirectiveFile);
-
-
+    $('#racechoose').click(function() {
+		var race = $('#raceSelect').val();
+		switch (race) {
+			case "hylotl":
+				alert("neutral.1, happy.1 will be the same!");
+				break;
+			case "glitch":
+				alert("wink.5, idle.1 will be the same!\n" +
+					"shocked.2, surprised.2 will be the same!");
+				break;
+			case "avian":
+				alert("blink.2, blabber.1 will be the same!\n" + 
+				"laught.1, happy.2 will be the same!\n" +
+				"neutral.1, annoyed, oh.1, oooh.1 will be the same!\n" +
+				"oh.2, oooh.2, oooh.3 will be the same!\n" +
+				"wink.1, wink.4 will be the same!\n" +
+				"wink.2, wink.3 will be the same!");
+				break;
+		};
+		generateEmoteDirectiveFile();
+	});
+	
     // Load preview
     var imageCharacter = new Image();
     imageCharacter.onload = function() {
