@@ -88,6 +88,11 @@ var speciesDirectives = {
 		"ffffff00=00a700;f9fafa08=00b100;f5f5fc0a=00b200;fbfbfc05=00b300;f8fafc08=00b400;f9fbfc06=00b500;fdfcfb04=00c100;" + 
 		"fbf7f50b=00c200;f8eee721=00c400;f9f4f30d=00d200;fcfaf906=00e200;f8f2ee14=00f300;f8f1ed15=00f400" + 
 		"?scale=2?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
+		"?multiply=2eff2e00?scale=47?crop;1;1;44;44",
+	novakid: "?crop;17;21;27;31?scale=0.7?scale=0.7?scale=0.7?scale=0.9?scale=1.1?crop;2;1;3;2?replace;fafbe290=00a100;fefdfa90=00a200;" +
+		"ffffff00=00a300;f5ebe600=00a400;f7fcff06=00b100;f8fcff05=00b200;d9d9ff24=00b300;fafdff03=00b400;f2eae502=00b500;fffefe90=00c100;" +
+		"f7eeeb00=00c400;f5e9e490=00e400;d6a48700=00e500;faf5f300=00f400;ebd3c600=00f500;f9f5f100=00f600?scale=2" +
+		"?blendscreen=/ships/apex/apexT3blocks.png;6;20?multiply=00ffff?blendscreen=/ships/apex/apexT3blocks.png;-1;0" +
 		"?multiply=2eff2e00?scale=47?crop;1;1;44;44"
 };
 var sheetImported = false;
@@ -150,10 +155,17 @@ $(function() {
 			case "avian":
 				alert("blink.2, blabber.1 will be the same!\n" + 
 				"laught.1, happy.2 will be the same!\n" +
+				"idle.1, blink.1 will be the same!\n" +
 				"neutral.1, annoyed, oh.1, oooh.1 will be the same!\n" +
 				"oh.2, oooh.2, oooh.3 will be the same!\n" +
 				"wink.1, wink.4 will be the same!\n" +
 				"wink.2, wink.3 will be the same!");
+				break;
+			case "novakid":
+				alert("blabber.1, happy.1 will be the same!\n" + 
+				"blabber.2, happy.2 will be the same!\n" +
+				"shout.1, idle.1, neutral.2, annoyed.2, oh.2, oooh.1, blink.1 will be the same!\n" +
+				"neutral.1, laugh.1, annoyed.1, oh.1, blink.2, wink.1 will be the same!");
 				break;
 		};
 		generateEmoteDirectiveFile();
