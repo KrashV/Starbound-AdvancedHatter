@@ -199,6 +199,23 @@ $(function() {
             canvasHair.fadeIn(100);
     });
 
+    // Bind hide body
+    $("#checkHide").change(function() {
+		var canvasHair = $("#cvsPreviewHair");
+        var canvasCharacter = $("#cvsPreviewCharacter");
+		var canvasEmote = $("#cvsPreviewEmote");
+        if (this.checked) {
+            canvasHair.fadeOut(100);
+			canvasCharacter.fadeOut(100);
+			canvasEmote.fadeOut(100);
+		}
+        else {
+            canvasHair.fadeIn(100);
+			canvasCharacter.fadeIn(100);
+			canvasEmote.fadeIn(100);
+		}
+    });
+	
     // Bind emote selection
     $("#emoteSelect").change(function() {
         var select = document.getElementById("frameSelect");
@@ -480,7 +497,13 @@ function generatePlainText() {
             var mask = "?submask=/items/armors/decorative/hats/eyepatch/mask.png";
             obj.parameters.mask = mask;
         }
-
+		
+		if ($("#checkHide").get(0).checked) {
+            var itemName = "frogghead";
+			obj.name = itemName;
+            obj.parameters.itemName = itemName;
+        }
+		
         for (var emote in emoteSelect) {
             if (emote == "idle")
                 obj.parameters.advancedHatter[emote] = [directives];
@@ -536,6 +559,12 @@ function generateCommand() {
             obj.mask = mask;
         }
 
+		if ($("#checkHide").get(0).checked) {
+            var itemName = "frogghead";
+			obj.name = itemName;
+            obj.itemName = itemName;
+        }
+		
         for (var emote in emoteSelect) {
             if (emote == "idle")
                 obj.advancedHatter[emote] = [directives];
@@ -548,7 +577,7 @@ function generateCommand() {
             }
         }
         // Escape quotes in JSON parameters to prevent early end of stream (since parameters are wrapped in ' in the chat processor).
-        var cmd = "/spawnitem eyepatchhead 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
+        var cmd = "/spawnitem " + obj.itemName + " 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
 
         var blob = new Blob([cmd], {
             type: "text/plain;charset=utf8"
