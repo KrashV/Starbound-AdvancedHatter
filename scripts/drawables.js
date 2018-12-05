@@ -210,7 +210,9 @@ $(function() {
 			canvasEmote.fadeOut(100);
 		}
         else {
-            canvasHair.fadeIn(100);
+			if (!$("#checkMask").get(0).checked) {
+				canvasHair.fadeIn(100);
+			}
 			canvasCharacter.fadeIn(100);
 			canvasEmote.fadeIn(100);
 		}
