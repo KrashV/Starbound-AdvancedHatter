@@ -21,6 +21,7 @@
       <script src="scripts/jquery-1.11.3.min.js"></script>
       <!-- Custom script -->
       <script src="scripts/script.js"></script>
+	  <script src="scripts/cookies.js"></script>
       <script src="scripts/FileSaver.min.js"></script>
       <script src="scripts/drawables.js"></script>
       <title>Advanced Hatter</title>
@@ -69,7 +70,7 @@
                      <canvas id="logoHat"></canvas>
                      Starbound Advanced Hatter
                   </h1>
-                  <p>Don't forget to download the mod first!</p>
+                  <p>Custom emotes for Starbound hats</p>
                </div>
             </div>
          </div>
@@ -115,6 +116,26 @@
                </div>
             </div>
          </div>
+		 
+         <!-- Dialog Mod Confirm -->
+         <div id="modConfirmModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+               <!-- Modal content-->
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Warning!</h4>
+                  </div>
+                  <div class="modal-body">
+                     <p>You need <a href='https://github.com/KrashV/Starbound-AdvancedHatter/releases' target="_blank">this mod</a> to get it working</p>
+                  </div>
+                  <div class="modal-footer">
+					 <button type="button" class="btn btn-default" data-dismiss="modal">Got it!</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+		 
          <!-- Content -->
          <div class="container">
             <div class="row" style="margin-top:-40px;">

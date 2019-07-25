@@ -520,8 +520,7 @@ function generatePlainText() {
         var blob = new Blob([JSON.stringify(obj, null, 2)], {
             type: "text/plain;charset=utf8"
         });
-        saveAs(blob, "CustomAnimatedHat.json");
-        showAlert('#success-alert');
+        saveToFile(blob, "CustomAnimatedHat.json");
     }
 }
 
@@ -584,8 +583,7 @@ function generateCommand() {
         var blob = new Blob([cmd], {
             type: "text/plain;charset=utf8"
         });
-        saveAs(blob, "CustomAnimatedHatCommand.txt");
-        showAlert('#success-alert');
+        saveToFile(blob, "CustomAnimatedHatCommand.txt");
     }
 }
 
@@ -603,8 +601,7 @@ function generateEmoteDirectiveFile() {
         var blob = new Blob([directive], {
             type: "text/plain;charset=utf8"
         });
-        saveAs(blob, "EmoteDirective.txt");
-        showAlert('#success-alert');
+        saveToFile(blob, "EmoteDirective.txt");
     });
 }
 
@@ -716,4 +713,31 @@ function generateEmoteDirective(race, templateData) {
     }
 
     return directive;
+}
+
+/**
+ * Save the file and prompt the cookie about the mod
+**/
+
+function saveToFile(content, name) {
+	var hasBeenNotified = getCookie('hasBeenNotified');
+	if (hasBeenNotified == null) {
+	  $('#modConfirmModal').modal('show');
+	  $('#modConfirmModal').on('hidden.bs.modal', function () {
+		saveAs(content, name);
+        showAlert('#success-alert');
+	  });
+	  
+	  
+	  pathname = location.pathname;
+	  myDomain = pathname.substring(0,pathname.lastIndexOf('/')) +'/';
+	  // Set the expiration date of the cookie
+	  var largeExpDate = new Date ();
+	  largeExpDate.setTime(largeExpDate.getTime() + (365 * 24 * 3600 * 1000));
+	  setCookie('hasBeenNotified','true',largeExpDate);
+	} else {
+		saveAs(content, name);
+        showAlert('#success-alert');
+	}
+	
 }
