@@ -104,7 +104,7 @@ var spritesheet;
 $(function() {
 
     loadFeatureLogo();
-
+	
     // Bind select image
     $("#btnSelectImage").click(function() {
         $("#selectImage").trigger("click");
@@ -720,8 +720,9 @@ function generateEmoteDirective(race, templateData) {
 **/
 
 function saveToFile(content, name) {
-	var hasBeenNotified = getCookie('hasBeenNotified');
-	if (hasBeenNotified == null) {
+	var modVersion = getCookie('advancedHatterModVersion');
+	var latestReleaseTag = getReleaseTag();
+	if (modVersion == null || modVersion.localeCompare(latestReleaseTag) != 0) {
 	  $('#modConfirmModal').modal('show');
 	  $('#modConfirmModal').on('hidden.bs.modal', function () {
 		saveAs(content, name);
@@ -734,7 +735,7 @@ function saveToFile(content, name) {
 	  // Set the expiration date of the cookie
 	  var largeExpDate = new Date ();
 	  largeExpDate.setTime(largeExpDate.getTime() + (365 * 24 * 3600 * 1000));
-	  setCookie('hasBeenNotified','true',largeExpDate);
+	  setCookie('advancedHatterModVersion',latestReleaseTag,largeExpDate);
 	} else {
 		saveAs(content, name);
         showAlert('#success-alert');

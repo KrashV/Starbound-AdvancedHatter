@@ -139,3 +139,18 @@ function showAlert(alertId) {
 		$(alertId).slideUp(500);
 	});
 }
+
+/**
+  * Gets the latest release tag of the mod
+**/
+
+function getReleaseTag() {
+	var tagName = ""
+    $.ajax({
+        url: "https://api.github.com/repos/KrashV/Starbound-AdvancedHatter/releases/latest",
+		async: false
+    }).then(function(data) {
+       tagName = data.tag_name
+    });
+	return tagName
+}
