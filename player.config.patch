@@ -1,12 +1,7 @@
 [	
 	{
 		"op": "add",
-		"path": "/deploymentConfig/scripts/-",
-		"value": "/scripts/hatconfig.lua"
-	},
-	{
-		"op": "add",
-		"path": "/statusControllerSettings/primaryScriptSources/-",
-		"value": "/scripts/player_controller.lua"
+		"path": "/genericScriptContexts/advancedHatter",
+		"value": "/scripts/advancedHatHandler.lua"
 	}
 ]
