@@ -243,6 +243,44 @@ $(function() {
         clearCanvas($("#cvsPreviewEmote").get(0));
         imageEmote.src = "imgs/emotes/" + emote + this.value + ".png";
     });
+
+    // preventing page from redirecting
+    $("html").on("dragover", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $("#dropHere").attr("src","imgs/drophere.png");
+    });
+
+    $("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); 
+        d$("#dropHere").attr("src","imgs/emotes/idle.png");
+    });
+
+    // Drag enter
+    $('.upload-area').on('dragenter', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    // Drag over
+    $('.upload-area').on('dragover', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    // Drag leave
+    $("html").on("dragleave", function(e) { 
+        e.preventDefault(); e.stopPropagation(); 
+    });
+
+    // Drop
+    $('.upload-area').on('drop', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        readDrawableInput(e.originalEvent.dataTransfer, checkIfSpritesheet, false);
+        
+        $("#dropHere").attr("src","imgs/emotes/idle.png");
+    });
 });
 
 /**
@@ -372,6 +410,18 @@ function readDrawableInput(input, callback, isSpritesheet) {
     }
 }
 
+function checkIfSpritesheet() {
+    image = this;
+
+    if (image.height == 344 && image.width == 387) {
+        return spritesheetLoaded(this);
+    } else if (image.height == 43 && image.width == 43) {
+        return drawableLoaded();
+    } else {
+        showAlert("#warning-dimension-frame");
+    }
+}
+
 /**
  * Called when the selected drawable is loaded.
  * Validates the dimensions and renders the image on the preview.
@@ -426,8 +476,8 @@ function drawableLoaded() {
  * Called when the spritesheet is loaded.
  * Validates the dimensions and fills the images
  */
-function spritesheetLoaded() {
-    var sheet = this;
+function spritesheetLoaded(e) {
+    var sheet = e || this;
 
     if (sheet == null)
         return;

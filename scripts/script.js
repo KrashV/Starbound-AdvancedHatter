@@ -13,7 +13,6 @@ $(function() {
   path = time >= 18 || time < 6 ? "imgs/backgroundNight.jpg" : "imgs/backgroundDay.jpg";
 
   document.getElementById("featureBackground").style.backgroundImage = "url('" + path +  "')";
-
 });
 
 // Event handler that checks if the value of the element with id 'idFrom' is a hexadecimal colour code, and applies it to the value of the element with id 'idTo'.
@@ -139,6 +138,7 @@ function showAlert(alertId) {
 		$(alertId).slideUp(500);
 	});
 }
+
 
 /**
   * Gets the latest release tag of the mod
