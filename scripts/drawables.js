@@ -252,7 +252,7 @@ $(function() {
     });
 
     $("html").on("drop", function(e) { e.preventDefault(); e.stopPropagation(); 
-        ("#dropHere").attr("src","imgs/emotes/idle.png");
+        $("#dropHere").attr("src","imgs/emotes/idle.png");
     });
 
     // Drag enter
