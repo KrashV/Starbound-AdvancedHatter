@@ -132,8 +132,8 @@ $(function() {
     });
 
     // Bind generate output
-    $("#btnPlainText").click(generatePlainText);
-    $("#btnCommand").click(generateCommand);
+    $("#btnPlainText").click(function() {generatePlainText()});
+    $("#btnCommand").click(function() {generateCommand()});
     $("#btnFileClipboard").click(function() {generatePlainText(true)});
     $("#btnCommandClipboard").click(function() {generateCommand(true)});
 
@@ -536,56 +536,8 @@ function spritesheetLoaded(e) {
 function generatePlainText(toClipboard) {
 
     if (confirmDrawable(true)) {
-        var directives = generateDirectives(emoteSelect["idle"]["1"]);
+        var obj = generateItem()
 
-        var obj = {
-            "count": 1,
-            "name": "eyepatchhead",
-            "parameters": {
-                directives: "",
-                description: "This is my hat! Give it back!",
-                femaleFrames: "head.png",
-                inventoryIcon: "head.png",
-                itemName: "eyepatchhead",
-                maleFrames: "head.png",
-                mask: "mask.png",
-                maxStack: 1,
-                price: 0,
-                advancedHatter: {},
-                rarity: "common",
-                shortdescription: "Custom Hat",
-                statusEffects: [],
-                tooltipKind: "armor"
-            }
-        };
-
-        obj.parameters.shortdescription = $("#itemName").get(0).value;
-        obj.parameters.description = $("#itemDescription").get(0).value;
-        obj.parameters.rarity = $("#itemRarity").get(0).value;
-        obj.parameters.directives = directives;
-
-        if ($("#checkMask").get(0).checked) {
-            var mask = "?submask=/items/armors/decorative/hats/eyepatch/mask.png";
-            obj.parameters.mask = mask;
-        }
-		
-		if ($("#checkHide").get(0).checked) {
-            var itemName = "frogghead";
-			obj.name = itemName;
-            obj.parameters.itemName = itemName;
-        }
-		
-        for (var emote in emoteSelect) {
-            if (emote == "idle")
-                obj.parameters.advancedHatter[emote] = [directives];
-            else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
-                obj.parameters.advancedHatter[emote] = [];
-                for (var frame in emoteSelect[emote]) {
-                    var dir = generateDirectives(emoteSelect[emote][frame]);
-                    obj.parameters.advancedHatter[emote].push(dir);
-                }
-            }
-        }
         if (toClipboard) {
             navigator.clipboard.writeText(JSON.stringify(obj));
             showAlert("#success-clipboard")
@@ -604,53 +556,8 @@ function generatePlainText(toClipboard) {
 function generateCommand(toClipboard) {
 
     if (confirmDrawable(true)) {
-        var directives = generateDirectives(emoteSelect["idle"]["1"]);
 
-        var obj = {
-            directives: "",
-            description: "This is my hat! Give it back!",
-            femaleFrames: "head.png",
-            inventoryIcon: "head.png",
-            itemName: "eyepatchhead",
-            maleFrames: "head.png",
-            mask: "mask.png",
-            maxStack: 1,
-            price: 0,
-            advancedHatter: {},
-            rarity: "common",
-            shortdescription: "Custom Hat",
-            statusEffects: [],
-            tooltipKind: "armor"
-        };
-
-        // Double escaping to work around the escaping done by the chat processor (ew).
-        obj.shortdescription = $("#itemName").get(0).value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
-        obj.description = $("#itemDescription").get(0).value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
-        obj.rarity = $("#itemRarity").get(0).value;
-        obj.directives = directives;
-
-        if ($("#checkMask").get(0).checked) {
-            var mask = "?submask=/items/armors/decorative/hats/eyepatch/mask.png";
-            obj.mask = mask;
-        }
-
-		if ($("#checkHide").get(0).checked) {
-            var itemName = "frogghead";
-			obj.name = itemName;
-            obj.itemName = itemName;
-        }
-		
-        for (var emote in emoteSelect) {
-            if (emote == "idle")
-                obj.advancedHatter[emote] = [directives];
-            else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
-                obj.advancedHatter[emote] = [];
-                for (var frame in emoteSelect[emote]) {
-                    var dir = generateDirectives(emoteSelect[emote][frame]);
-                    obj.advancedHatter[emote].push(dir);
-                }
-            }
-        }
+        var obj = generateItem()
         // Escape quotes in JSON parameters to prevent early end of stream (since parameters are wrapped in ' in the chat processor).
         var cmd = "/spawnitem " + obj.itemName + " 1 '" + JSON.stringify(obj).replace(/'/g, "\\'") + "'";
 
@@ -664,6 +571,56 @@ function generateCommand(toClipboard) {
             saveToFile(blob, "CustomAnimatedHatCommand.txt");
         }        
     }
+}
+
+function generateItem() {
+    var directives = generateDirectives(emoteSelect["idle"]["1"]);
+    var obj = {
+        directives: "",
+        description: "This is my hat! Give it back!",
+        femaleFrames: "head.png",
+        inventoryIcon: "head.png",
+        itemName: "eyepatchhead",
+        maleFrames: "head.png",
+        mask: "mask.png",
+        maxStack: 1,
+        price: 0,
+        advancedHatter: {},
+        rarity: "common",
+        shortdescription: "Custom Hat",
+        statusEffects: [],
+        tooltipKind: "armor"
+    };
+
+    // Double escaping to work around the escaping done by the chat processor (ew).
+    obj.shortdescription = $("#itemName").get(0).value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+    obj.description = $("#itemDescription").get(0).value.replace(/\\/g, "\\\\").replace(/"/g, "\\\"");
+    obj.rarity = $("#itemRarity").get(0).value;
+    obj.directives = directives;
+
+    if ($("#checkMask").get(0).checked) {
+        var mask = "?submask=/items/armors/decorative/hats/eyepatch/mask.png";
+        obj.mask = mask;
+    }
+
+    if ($("#checkHide").get(0).checked) {
+        var itemName = "frogghead";
+        obj.name = itemName;
+        obj.itemName = itemName;
+    }
+    
+    for (var emote in emoteSelect) {
+        if (emote == "idle")
+            obj.advancedHatter[emote] = [directives];
+        else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
+            obj.advancedHatter[emote] = [];
+            for (var frame in emoteSelect[emote]) {
+                var dir = generateDirectives(emoteSelect[emote][frame]);
+                obj.advancedHatter[emote].push(dir);
+            }
+        }
+    }
+    return obj
 }
 
 /**
