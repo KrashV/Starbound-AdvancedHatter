@@ -410,6 +410,7 @@ function readDrawableInput(input, callback, isSpritesheet) {
     }
 }
 
+// a handler function to check whether we dropped a spritesheet or a single frame or nothing
 function checkIfSpritesheet() {
     image = this;
 
@@ -421,6 +422,19 @@ function checkIfSpritesheet() {
         showAlert("#warning-dimension-frame");
     }
 }
+
+
+// returns true if every pixel's uint32 representation is 0 (or "blank")
+function isCanvasBlank(canvas) {
+    const context = canvas.getContext('2d');
+  
+    const pixelBuffer = new Uint32Array(
+      context.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+    );
+  
+    return !pixelBuffer.some(color => color !== 0);
+  }
+
 
 /**
  * Called when the selected drawable is loaded.
@@ -495,9 +509,11 @@ function spritesheetLoaded(e) {
                 canvas.height = 43;
                 var context = canvas.getContext("2d");
                 context.drawImage(sheet, y * 43, x * 43, 43, 43, 0, 0, canvas.width, canvas.height);
-                var img = new Image;
-                img.src = canvas.toDataURL();
-                emoteSelect[sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
+                if (!isCanvasBlank(canvas)) {
+                    var img = new Image;
+                    img.src = canvas.toDataURL();
+                    emoteSelect[sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
+                }
             }
         }
     }
