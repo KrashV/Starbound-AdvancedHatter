@@ -418,7 +418,7 @@ function checkIfSpritesheet() {
     image = this;
 
     if (image.height == 344 && image.width == 387) {
-        return spritesheetLoaded(this);
+        return spritesheetLoaded(this, true);
     } else if (image.height == 43 && image.width == 43) {
         return drawableLoaded();
     } else {
@@ -493,8 +493,8 @@ function drawableLoaded() {
  * Called when the spritesheet is loaded.
  * Validates the dimensions and fills the images
  */
-function spritesheetLoaded(e) {
-    var sheet = e || this;
+function spritesheetLoaded(e, fromDrop) {
+    var sheet = fromDrop ? e : this;
 
     if (sheet == null)
         return;
