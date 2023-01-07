@@ -22,7 +22,7 @@
 	  
       <!-- Custom script -->
       <script src="scripts/script.js"></script>
-	  <script src="scripts/cookies.js"></script>
+	   <script src="scripts/cookies.js"></script>
       <script src="scripts/FileSaver.min.js"></script>
       <script src="scripts/drawables.js"></script>
       <title>Advanced Hatter</title>
@@ -148,7 +148,7 @@
                   <h3 class="content-header">Options</h3>
                   <div class="input-group">
                      <label for="emoteSelect">Emote:</label>
-                     <select id="emoteSelect" class="form-control" autocomplete="off">
+                     <select id="emoteSelect" class="form-control" autocomplete="off"  style="width:100%;">
                         <option value="idle">Idle</option>
                         <option value="blink">Blink</option>
                         <option value="blabber">Blabber</option>
@@ -162,20 +162,28 @@
                         <option value="annoyed">Annoyed</option>
                         <option value="neutral">Neutral</option>
                      </select>
-                     <div class="input-group-addon input-group-select">
+                     <div class="input-group-addon input-group-select" style="width:20%;">
                         <label for="frameSelect">Frame:</label>
-                        <select id="frameSelect" class="form-control" style="width:120%;">
+                        <select id="frameSelect" class="form-control">
                            <option value="1">1</option>
                         </select>
                      </div>
+                     <div class="input-group-addon input-group-select" style="width:20%;">
+                        <label for="sheetSelect">Direction:</label>
+                        <select id="sheetSelect" class="form-control">
+                           <option value="default" selected >Default</option>
+                           <option value="reverse"          >Reverse</option>
+                        </select>
+                     </div>
+
                      <div class="input-group-addon input-group-button">
-                        <label for="btnSelectImage">Select frame:</label><br>
+                        <label for="btnSelectImage">Pick frame:</label><br>
                         <button id="btnSelectImage" class="btn btn-default">Select</button>
                         <input style="display:none;" id="selectImage" type="file" accept="image/*">
                      </div>
                      <div class="input-group-addon input-group-button">
                         <label for="btnRemoveImage">Remove frame:</label><br>
-                        <button id="btnRemoveImage" class="btn btn-default">Remove</button>
+                        <button id="btnRemoveImage" class="btn btn-danger">Remove</button>
                      </div>
                   </div>
                   <div class="form-group">

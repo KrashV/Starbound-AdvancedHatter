@@ -147,8 +147,8 @@ function showAlert(alertId) {
 function getReleaseTag() {
 	var tagName = ""
     $.ajax({
-        url: "https://api.github.com/repos/KrashV/Starbound-AdvancedHatter/releases/latest",
-		async: false
+      url: "https://api.github.com/repos/KrashV/Starbound-AdvancedHatter/releases/latest",
+		  async: false
     }).then(function(data) {
        tagName = data.tag_name
     });

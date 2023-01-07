@@ -3,7 +3,8 @@
  * This work is licensed under a Creative Commons Attribution 3.0 Unported License.
  * https://creativecommons.org/licenses/by/3.0/
  */
-var emoteSelect = {
+
+const emoteSelect = {
     idle: {},
     blink: {},
     blabber: {},
@@ -18,7 +19,12 @@ var emoteSelect = {
     annoyed: {}
 };
 
-var emoteFrames = {
+var emoteSet = {
+    default: JSON.parse(JSON.stringify(emoteSelect)),
+    reverse:JSON.parse(JSON.stringify(emoteSelect))
+}
+
+const emoteFrames = {
     idle: 1,
     blink: 2,
     blabber: 2,
@@ -33,7 +39,7 @@ var emoteFrames = {
     annoyed: 2
 };
 
-var sheetPieces = [
+const sheetPieces = [
     [null, ["blabber", "1"], ["blabber", "2"], null, ["shout", "1"], ["shout", "2"], null, null, null],
     [null, ["happy", "1"], ["happy", "2"], null, null, null, null, ["idle", "1"], null],
     [null, ["sad", "1"], ["sad", "2"], ["sad", "3"], ["sad", "4"], ["sad", "5"], null, null, null],
@@ -44,7 +50,7 @@ var sheetPieces = [
     [null, ["blink", "1"], ["blink", "2"], null, ["wink", "1"], ["wink", "2"], ["wink", "3"], ["wink", "4"], null]
 ];
 
-var speciesDirectives = {
+const speciesDirectives = {
 	human: "?crop;17;21;27;31?scale=0.7?replace;af8e7529=0000ff?scale=0.7?scale=0.7?scale=0.9?crop;2;1;3;2" + 
 		"?replace;cc8c651c=00a100;c1735432=00a200;c57d5a26=00a300;c2735547=00a400;ca88611c=00a500;" + 
 		"bf6e4f32=00a600;ffffff00=00a700;ca996f1d=00b100;c2825e06=00b200;a56a752a=00b300;c2825d05=00b400;" + 
@@ -127,7 +133,7 @@ $(function() {
 
     // Bind remove image
     $("#btnRemoveImage").click(function() {
-        emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = null;
+        emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()] = null;
         drawableLoaded();
     });
 
@@ -247,6 +253,13 @@ $(function() {
         imageEmote.src = "imgs/emotes/" + emote + this.value + ".png";
     });
 
+    // Bind direction selection
+    $("#sheetSelect").change(function() {
+        drawableLoaded();
+        clearCanvas($("#cvsPreviewEmote").get(0));
+        imageEmote.src = "imgs/emotes/" + $("#emoteSelect").val() +  $("#frameSelect").val() + ".png";
+    });
+
     // preventing page from redirecting
     $("html").on("dragover", function(e) {
         e.preventDefault();
@@ -319,7 +332,7 @@ function loadFeatureLogo() {
  */
 function confirmDrawable(alertUser) {
 
-    if (emoteSelect["idle"]["1"] == null) {
+    if (emoteSet["default"]["idle"]["1"] == null) {
         if (alertUser)
             showAlert("#warning-empty-frame");
         return false;
@@ -405,8 +418,9 @@ function readDrawableInput(input, callback, isSpritesheet) {
             var img = new Image;
             img.onload = callback;
             img.src = this.result;
-            if (!isSpritesheet)
-                emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = img;
+            if (!isSpritesheet) {
+                emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()] = img;
+            }
         };
         fr.readAsDataURL(file);
 
@@ -444,7 +458,7 @@ function isCanvasBlank(canvas) {
  * Validates the dimensions and renders the image on the preview.
  */
 function drawableLoaded() {
-    var image = emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()];
+    var image = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()];
 
     if (image == null || image.width == 0 || image.height == 0) {
         $("#cvsPreviewHat").fadeOut(100, nextStep);
@@ -467,7 +481,7 @@ function drawableLoaded() {
         },
         // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
         function() {
-            emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()] = image;
+            emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()] = image;
             clearCanvas($("#cvsPreviewHat").get(0));
             drawResizedImage($("#cvsPreviewHat").get(0), image, 4);
             $("#cvsPreviewHat").animate({
@@ -515,7 +529,7 @@ function spritesheetLoaded(e, fromDrop) {
                 if (!isCanvasBlank(canvas)) {
                     var img = new Image;
                     img.src = canvas.toDataURL();
-                    emoteSelect[sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
+                    emoteSet[$("#sheetSelect").val()][sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
                 }
             }
         }
@@ -523,7 +537,7 @@ function spritesheetLoaded(e, fromDrop) {
 
     var image = new Image;
     image.onload = drawableLoaded;
-    image.src = emoteSelect[$("#emoteSelect").val()][$("#frameSelect").val()].src;
+    image.src = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()].src;
 
     sheetImported = true;
     spritesheet = this;
@@ -574,7 +588,7 @@ function generateCommand(toClipboard) {
 }
 
 function generateItem() {
-    var directives = generateDirectives(emoteSelect["idle"]["1"]);
+    var directives = generateDirectives(emoteSet["default"]["idle"]["1"]);
     let hideBody = $("#checkHide")[0].checked;
     var obj = {
         name: hideBody ? "frogghead" : "eyepatchhead",
@@ -588,7 +602,9 @@ function generateItem() {
             mask: "mask.png",
             maxStack: 1,
             price: 0,
-            advancedHatter: {},
+            advancedHatter: {
+                version: 2
+            },
             rarity: "common",
             shortdescription: "Custom Hat",
             statusEffects: [],
@@ -613,14 +629,26 @@ function generateItem() {
         obj.parameters.itemName = itemName;
     }
     
-    for (var emote in emoteSelect) {
+    obj.parameters.advancedHatter.default = {}
+    for (var emote in emoteSet["default"]) {
         if (emote == "idle")
-            obj.parameters.advancedHatter[emote] = [directives];
-        else if (!jQuery.isEmptyObject(emoteSelect[emote])) {
-            obj.parameters.advancedHatter[emote] = [];
-            for (var frame in emoteSelect[emote]) {
-                var dir = generateDirectives(emoteSelect[emote][frame]);
-                obj.parameters.advancedHatter[emote].push(dir);
+            obj.parameters.advancedHatter.default[emote] = [directives];
+        else if (!jQuery.isEmptyObject(emoteSet["default"][emote])) {
+            obj.parameters.advancedHatter.default[emote] = [];
+            for (var frame in emoteSet["default"][emote]) {
+                var dir = generateDirectives(emoteSet["default"][emote][frame]);
+                obj.parameters.advancedHatter.default[emote].push(dir);
+            }
+        }
+    }
+
+    obj.parameters.advancedHatter.reverse = {}
+    for (var emote in emoteSet["reverse"]) {
+        if (!jQuery.isEmptyObject(emoteSet["reverse"][emote])) {
+            obj.parameters.advancedHatter.reverse[emote] = [];
+            for (var frame in emoteSet["reverse"][emote]) {
+                var dir = generateDirectives(emoteSet["reverse"][emote][frame]);
+                obj.parameters.advancedHatter.reverse[emote].push(dir);
             }
         }
     }
