@@ -1,0 +1,11 @@
+[
+  {
+    "op": "add",
+    "path": "/normal/-",
+    "value": {
+      "label": "Head setter",
+      "icon": "/quickbar/headsetter.png",
+      "pane": "/interface/scripted/advancedhatter/headsetter.config"
+    }
+  }
+]
