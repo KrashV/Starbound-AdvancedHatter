@@ -2,7 +2,7 @@
 Now supports [HasiboundLite](https://github.com/TheFurryDevil/hasiboundlite) by TheFurryDevil and [StarExtentions](https://github.com/StarExtensions/StarExtensions) by Khmyis. Requires QuickBar / Stardust Core Lite
 
 # Installation
-Download the [latest release](https://github.com/KrashV/AdvancedHatterFacial/releases) and place the .pak file in the /starbound/mods folder.
+Download the [latest release](https://github.com/KrashV/AdvancedHatter/releases) and place the .pak file in the /starbound/mods folder.
 
 # Usage
 1. Navigate to the [Creation site](https://krashv.github.io/Starbound-AdvancedHatter/), create the hat and import it into the game.
