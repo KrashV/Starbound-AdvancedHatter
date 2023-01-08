@@ -540,7 +540,7 @@ function spritesheetLoaded(e, fromDrop) {
     image.src = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()].src;
 
     sheetImported = true;
-    spritesheet = this;
+    spritesheet = sheet;
 }
 
 
@@ -664,7 +664,7 @@ function generateEmoteDirectiveFile() {
         return;
     }
 
-    getImageData('imgs/templates/emote.bmp', function(templateImageData) {
+    getImageData('https://i.imgur.com/VY4KOrx.png', function(templateImageData) {
         var directive = generateEmoteDirective($('#raceSelect').val(), templateImageData);
         var blob = new Blob([directive], {
             type: "text/plain;charset=utf8"
@@ -685,7 +685,8 @@ function getImageData(source, callback) {
         canvas.width = this.naturalWidth;
         canvas.height = this.naturalHeight;
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         // Return the image data
         callback(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
     };
