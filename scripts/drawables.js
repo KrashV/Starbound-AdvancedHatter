@@ -690,6 +690,7 @@ function getImageData(source, callback) {
         callback(ctx.getImageData(0, 0, canvas.width, canvas.height).data);
     };
     image.src = source;
+    image.crossOrigin = "Anonymous";
 }
 
 
