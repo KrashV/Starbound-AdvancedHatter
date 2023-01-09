@@ -21,7 +21,7 @@ const emoteSelect = {
 
 var emoteSet = {
     default: JSON.parse(JSON.stringify(emoteSelect)),
-    reverse:JSON.parse(JSON.stringify(emoteSelect))
+    reverse: JSON.parse(JSON.stringify(emoteSelect))
 }
 
 const emoteFrames = {
@@ -642,16 +642,19 @@ function generateItem() {
         }
     }
 
-    obj.parameters.advancedHatter.reverse = {}
-    for (var emote in emoteSet["reverse"]) {
-        if (!jQuery.isEmptyObject(emoteSet["reverse"][emote])) {
-            obj.parameters.advancedHatter.reverse[emote] = [];
-            for (var frame in emoteSet["reverse"][emote]) {
-                var dir = generateDirectives(emoteSet["reverse"][emote][frame]);
-                obj.parameters.advancedHatter.reverse[emote].push(dir);
+    if (Object.keys(emoteSet["reverse"]).some(emote => !jQuery.isEmptyObject(emoteSet["reverse"][emote]))) {
+        obj.parameters.advancedHatter.reverse = {}
+        for (var emote in emoteSet["reverse"]) {
+            if (!jQuery.isEmptyObject(emoteSet["reverse"][emote])) {
+                obj.parameters.advancedHatter.reverse[emote] = [];
+                for (var frame in emoteSet["reverse"][emote]) {
+                    var dir = generateDirectives(emoteSet["reverse"][emote][frame]);
+                    obj.parameters.advancedHatter.reverse[emote].push(dir);
+                }
             }
         }
     }
+
     return obj
 }
 
