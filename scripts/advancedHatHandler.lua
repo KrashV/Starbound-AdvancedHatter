@@ -4,7 +4,6 @@ function init()
   self.previousPosition = world.entityPosition(player.id())
   self.previousDirection = "none"
   
-  self.slotName = "headCosmetic"
 	local hairGroups = {
 		human = {
 			hairType = "male54",
@@ -59,22 +58,21 @@ function init()
 		oooh = "shocked",
 		eat = "shout"
   }
+
   self.aliases = root.assetJson("/humanoid/emote.frames").aliases
 	local species = player.species()
 
 	local head = player.getProperty("animatedHead")
 	self.mode = _ENV["player"]["setFacialHairType"] and "StarExtentions" or _ENV["_star_player"] and "hasiboundlite" or nil
 	self.innerHead = head and self.mode and root.assetJson("/animatedhats/" .. head .. ".json") or nil
-	
+
 	if self.innerHead and hairGroups[species] then
 		if self.mode == "hasiboundlite" then
 			_star_player():set_hair_type(hairGroups[species].hairType)
-			_star_player():set_emote_directives("")
 			_star_player():set_facialHair_group(hairGroups[species].facialHairGroup)
 			_star_player():set_facialHair_type(hairGroups[species].facialHairType)
 		elseif self.mode == "StarExtentions" then
 			player.setHairType(hairGroups[species].hairType)
-			player.setEmoteDirectives("")
 			player.setFacialHairGroup(hairGroups[species].facialHairGroup)
 			player.setFacialHairType(hairGroups[species].facialHairType)
 		end
@@ -90,25 +88,21 @@ function update(dt)
 	local currentDirectionName = currentDirection > 0 and "default" or "reverse"
 	
 	local mode, slotName, currentHat = getHeadItem()
-	self.currentHat = currentHat
 	
-	if self.currentHat and self.currentHat.parameters.advancedHatter then
-		if getVersion() == 2 then
-			if not self.currentHat.parameters.advancedHatter[currentDirectionName][self.emotes[currentEmote]] then currentEmote = "idle" currentEmoteFrame = "idle" end
-		else -- support previous version
-			if not self.currentHat.parameters.advancedHatter[self.emotes[currentEmote]] then currentEmote = "idle" currentEmoteFrame = "idle" end
-		end
+	if currentHat and currentHat.parameters.advancedHatter then
+		local parms = currentHat.parameters.advancedHatter
 
 		if currentDirection ~= self.previousDirection or currentEmoteFrame ~= self.previousEmote then
-			local directives = getFrame(currentDirection, currentEmoteFrame)
+			local directives = getFrame(parms, currentDirection, currentEmoteFrame)
+
 			if directives then
 				if mode == "hasiboundlite" then
 					_star_player():set_facialHair_directives(directives)
 				elseif mode == "StarExtentions" then
 					player.setFacialHairDirectives(directives)
 				else
-					self.currentHat.parameters.directives = directives
-					player.setEquippedItem(self.slotName, self.currentHat)
+					currentHat.parameters.directives = directives
+					player.setEquippedItem(slotName, currentHat)
 				end
 			end
 
@@ -118,21 +112,20 @@ function update(dt)
 	end
 end
 
-function getVersion()
-	return self.currentHat.parameters.advancedHatter.version or 1
+function getVersion(parms)
+	return parms.version or 1
 end
 
-function getHeadItem()
-
+function getHeadItem(parms)
 	local slotName = "headCosmetic"
 	local currentHat = player.equippedItem(slotName)
 	
-	if not currentHat then
+	if not currentHat or not currentHat.parameters.advancedHatter then
 		slotName = "head"
 		currentHat = player.equippedItem(slotName)
 	end
 
-	if not currentHat then 
+	if not currentHat or not currentHat.parameters.advancedHatter then 
 		if self.innerHead then return self.mode, _, self.innerHead end
 	else
 		return "item", slotName, currentHat
@@ -152,9 +145,10 @@ function getEmote()
 	return emote
 end
 
-function getFrame(direction, emoteFrame)
+function getFrame(parms, direction, emoteFrame)
 	local directives = ""
 	local currentDirectionName = direction > 0 and "default" or "reverse"
+	local otherDirectionName = direction <= 0 and "default" or "reverse"
 	
 	-- Check for aliases
 	if self.aliases[emoteFrame] then
@@ -166,25 +160,28 @@ function getFrame(direction, emoteFrame)
 	
 	-- Bugfix
 	if not frame then frame = 1 end
-	
-	if not self.currentHat.parameters.advancedHatter[currentDirectionName] or not self.currentHat.parameters.advancedHatter[currentDirectionName][self.emotes[emote]] then return nil end
 
-	-- Out of border check
-	if getVersion() == 2 then
-		frame = math.min(frame, #self.currentHat.parameters.advancedHatter[currentDirectionName][self.emotes[emote]])
+	if getVersion(parms) == 2 then
+		if not parms.reverse or (direction <= 0 and not parms["reverse"][self.emotes[emote]]) then
+			currentDirectionName = "default"
+		end
 
-		directives = self.currentHat.parameters.advancedHatter[currentDirectionName][self.emotes[emote]][frame]
+		if not parms[currentDirectionName][self.emotes[emote]] then return nil end
+
+		frame = math.min(frame, #parms[currentDirectionName][self.emotes[emote]])
+
+		directives = parms[currentDirectionName][self.emotes[emote]][frame]
 	else --previous version
-		frame = math.min(frame, #self.currentHat.parameters.advancedHatter[self.emotes[emote]])
+		frame = math.min(frame, #parms[self.emotes[emote]])
 
-		if type(self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame]) == "table" then
+		if type(parms[self.emotes[emote]][frame]) == "table" then
 			if direction > 0 then
-				directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame].default
+				directives = parms[self.emotes[emote]][frame].default
 			else
-				directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame].reverse
+				directives = parms[self.emotes[emote]][frame].reverse
 			end
 		else
-			directives = self.currentHat.parameters.advancedHatter[self.emotes[emote]][frame]
+			directives = parms[self.emotes[emote]][frame]
 		end
 	end
 
