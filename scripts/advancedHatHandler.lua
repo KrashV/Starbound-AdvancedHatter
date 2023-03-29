@@ -82,14 +82,15 @@ end
 
 function update(dt)	
 	-- Retrieve current parameters --
-	local currentEmoteFrame = getEmote()
-	local currentEmote = currentEmoteFrame:match("[^%d%W]+")
-	local currentDirection = mcontroller.facingDirection()
-	local currentDirectionName = currentDirection > 0 and "default" or "reverse"
 	
 	local mode, slotName, currentHat = getHeadItem()
 	
 	if currentHat and currentHat.parameters.advancedHatter then
+    local currentEmoteFrame = getEmote()
+    local currentEmote = currentEmoteFrame:match("[^%d%W]+")
+    local currentDirection = mcontroller.facingDirection()
+    local currentDirectionName = currentDirection > 0 and "default" or "reverse"
+  
 		local parms = currentHat.parameters.advancedHatter
 
 		if currentDirection ~= self.previousDirection or currentEmoteFrame ~= self.previousEmote then
@@ -172,6 +173,7 @@ function getFrame(parms, direction, emoteFrame)
 
 		directives = parms[currentDirectionName][self.emotes[emote]][frame]
 	else --previous version
+		if not parms[self.emotes[emote]] then return nil end
 		frame = math.min(frame, #parms[self.emotes[emote]])
 
 		if type(parms[self.emotes[emote]][frame]) == "table" then
