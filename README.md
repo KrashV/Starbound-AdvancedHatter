@@ -1,5 +1,5 @@
 # Starbound-AdvancedHatter
-Now supports [HasiboundLite](https://github.com/TheFurryDevil/hasiboundlite) by TheFurryDevil and [StarExtentions v1.5+](https://github.com/StarExtensions/StarExtensions) by Khmyis. Requires QuickBar / Stardust Core Lite
+Now supports [HasiboundLite](https://github.com/TheFurryDevil/hasiboundlite) by TheFurryDevil and [StarExtensions v1.5+](https://github.com/StarExtensions/StarExtensions) by kae. Requires QuickBar / Stardust Core Lite
 
 # Installation
 Download the [latest release](https://github.com/KrashV/Starbound-AdvancedHatter/releases) and place the .pak file in the /starbound/mods folder.
