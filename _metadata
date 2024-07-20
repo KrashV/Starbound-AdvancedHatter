@@ -1,8 +1,11 @@
 {
-  "version" : "1.3.7",
   "author" : "Degranon",
-  "requires" : [],
   "description" : "Add some functionality to your hats! Now with hasiboundlite support",
+  "friendlyName" : "Advanced Hatter",
+  "link" : "steam://url/CommunityFilePage/3234087906",
   "name" : "advancedhatter",
-  "friendlyName" : "Advanced Hatter"
+  "requires" : [],
+  "steamContentId" : "3234087906",
+  "tags" : "Armor and Clothes",
+  "version" : "1.3.7"
 }
