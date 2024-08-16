@@ -460,14 +460,19 @@ function isCanvasBlank(canvas) {
 function drawableLoaded() {
     var image = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()];
 
+    // Always clear the canvas first to ensure no old image remains
+    clearCanvas($("#cvsPreviewHat").get(0));
+
     if (image == null || image.width == 0 || image.height == 0) {
-        $("#cvsPreviewHat").fadeOut(100, nextStep);
+        $("#cvsPreviewHat").fadeOut(100);
         return;
     }
+
     if (image.height != 43 || image.width != 43) {
         showAlert("#warning-dimension-frame");
         return;
     }
+
     // Animate the preview update in three steps.
     var step = -1;
 
@@ -482,7 +487,6 @@ function drawableLoaded() {
         // Step two: Draw the new hat, and animate the preview dimensions if the new hat is bigger or smaller than the previous hat.
         function() {
             emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()] = image;
-            clearCanvas($("#cvsPreviewHat").get(0));
             drawResizedImage($("#cvsPreviewHat").get(0), image, 4);
             $("#cvsPreviewHat").animate({
                 bottom: 86,
@@ -502,6 +506,7 @@ function drawableLoaded() {
 
     nextStep();
 }
+
 
 /**
  * Called when the spritesheet is loaded.
@@ -530,15 +535,18 @@ function spritesheetLoaded(e, fromDrop) {
                     var img = new Image;
                     img.src = canvas.toDataURL();
                     emoteSet[$("#sheetSelect").val()][sheetPieces[x][y][0]][sheetPieces[x][y][1]] = img;
+                } else {
+                    emoteSet[$("#sheetSelect").val()][sheetPieces[x][y][0]][sheetPieces[x][y][1]] = null;
                 }
             }
         }
     }
 
     var image = new Image;
-    image.onload = drawableLoaded;
-    image.src = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()].src;
+    var emote = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()]
 
+    image.src = emote ? emote.src : "";
+    drawableLoaded();
     sheetImported = true;
     spritesheet = sheet;
 }
