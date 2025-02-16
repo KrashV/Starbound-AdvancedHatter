@@ -545,8 +545,9 @@ function spritesheetLoaded(e, fromDrop) {
     var image = new Image;
     var emote = emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()]
 
+    image.onload = drawableLoaded;
     image.src = emote ? emote.src : "";
-    drawableLoaded();
+
     sheetImported = true;
     spritesheet = sheet;
 }
