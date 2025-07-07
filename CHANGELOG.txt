@@ -1,1 +1,1 @@
-- New release automation
+- Fixed freezing the emote on turning away if the emote was not present in the different head orientation

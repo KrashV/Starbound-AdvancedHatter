@@ -10,7 +10,7 @@ Download the [latest release](https://github.com/KrashV/Starbound-AdvancedHatter
 For general use of Advanced Hatter, just load the spritesheet or the emotes separately, spawn the item in game and enjoy.
 The guide below described the functionality to integrate the sprite sheet into the character itself
 
-## StarExtensions v1.5+ / Hasiboundlite
+## OpenStarbound / StarExtensions v1.5+ / Hasiboundlite
 1. Navigate to the [Creation site](https://krashv.github.io/Starbound-AdvancedHatter/) and create the head item.
 2. In /mods folder, create a new subfolder with a preferable name
 2. Add the generated json file to the **/animatedhats** folder of the mod.
@@ -22,7 +22,7 @@ The guide below described the functionality to integrate the sprite sheet into t
 
 ![Hat successfully set](https://i.imgur.com/pveXEvN.png)
 
-5. Relog into the game for the changes to set place *(or do /reload)*
+5. Relog into the game for the changes to set place *(or run /reload command)*
 
-## !Important!
+## Important!
 The mod changes the facialHair and facialHairType of your characters to work. Keep that in mind.

@@ -86,10 +86,10 @@ function update(dt)
 	local mode, slotName, currentHat = getHeadItem()
 	
 	if currentHat and currentHat.parameters.advancedHatter then
-    local currentEmoteFrame = getEmote()
-    local currentEmote = currentEmoteFrame:match("[^%d%W]+")
-    local currentDirection = mcontroller.facingDirection()
-    local currentDirectionName = currentDirection > 0 and "default" or "reverse"
+		local currentEmoteFrame = getEmote()
+		local currentEmote = currentEmoteFrame:match("[^%d%W]+")
+		local currentDirection = mcontroller.facingDirection()
+		local currentDirectionName = currentDirection > 0 and "default" or "reverse"
   
 		local parms = currentHat.parameters.advancedHatter
 
@@ -163,11 +163,17 @@ function getFrame(parms, direction, emoteFrame)
 	if not frame then frame = 1 end
 
 	if getVersion(parms) == 2 then
-		if not parms.reverse or (direction <= 0 and not parms["reverse"][self.emotes[emote]]) then
+		if not parms.reverse then
 			currentDirectionName = "default"
 		end
 
-		if not parms[currentDirectionName][self.emotes[emote]] then return nil end
+		if not parms[currentDirectionName][self.emotes[emote]] then 
+			if parms[currentDirectionName][self.emotes["idle"]] then
+				emote = "idle"
+			else
+				return nil
+			end		
+		end
 
 		frame = math.min(frame, #parms[currentDirectionName][self.emotes[emote]])
 
