@@ -4,6 +4,9 @@
  * https://creativecommons.org/licenses/by/3.0/
  */
 
+const frameSize = [43, 43];
+const sheetSize = [387, 344];
+
 const emoteSelect = {
     idle: {},
     blink: {},
@@ -144,11 +147,7 @@ $(function() {
     $("#btnCommandClipboard").click(function() {generateCommand(true)});
 
     $("#btnDirective").click(function() {
-        if (spritesheet == null) {
-            showAlert("#warning-empty-sheet");
-            return;
-        }
-        $('#raceSelectModal').modal('show');
+        $('#emoteDirectivesWarningModal').modal('show');
     });
 
     $('#racechoose').click(function() {
@@ -431,13 +430,24 @@ function readDrawableInput(input, callback, isSpritesheet) {
 function checkIfSpritesheet() {
     image = this;
 
-    if (image.height == 344 && image.width == 387) {
+    if (image.height % 8 === 0 && image.width % 9 === 0) {
         return spritesheetLoaded(this, true);
-    } else if (image.height == 43 && image.width == 43) {
+    } else if (image.height <= 128 || image.width <= 128) {
+        return drawableLoaded();
+    } else {
+      showAlert("#warning-unknown-dimensions");
+    }
+
+
+/*
+    if (image.height == sheetSize[1] && image.width == sheetSize[0]) {
+        return spritesheetLoaded(this, true);
+    } else if (image.height == frameSize[0] && image.width == frameSize[1]) {
         return drawableLoaded();
     } else {
         showAlert("#warning-dimension-frame");
     }
+*/
 }
 
 
@@ -468,11 +478,6 @@ function drawableLoaded() {
         return;
     }
 
-    if (image.height != 43 || image.width != 43) {
-        showAlert("#warning-dimension-frame");
-        return;
-    }
-
     // Animate the preview update in three steps.
     var step = -1;
 
@@ -488,10 +493,7 @@ function drawableLoaded() {
         function() {
             emoteSet[$("#sheetSelect").val()][$("#emoteSelect").val()][$("#frameSelect").val()] = image;
             drawResizedImage($("#cvsPreviewHat").get(0), image, 4);
-            $("#cvsPreviewHat").animate({
-                bottom: 86,
-                left: 86
-            }, 100, nextStep);
+            $("#cvsPreviewHat").animate({bottom: (86-image.height)*2, left: (86-image.width)*2}, 100, nextStep);
         },
         // Step three: Fade in the new hat.
         function() {
@@ -518,19 +520,22 @@ function spritesheetLoaded(e, fromDrop) {
     if (sheet == null)
         return;
 
-    if (sheet.height != 344 || sheet.width != 387) {
-        showAlert("#warning-dimension-sheet");
-        return;
+    // Spritesheet: 9 by 8 frames
+    const frameSize = [sheet.height / 8, sheet.width / 9];
+
+    if (frameSize[0] > 128 || frameSize[1] > 128) {
+      showAlert("#warning-dimension-frame");
+      return;
     }
 
     for (var x = 0; x < sheetPieces.length; ++x) {
         for (var y = 0; y < sheetPieces[x].length; ++y) {
             if (sheetPieces[x][y] != null) {
                 var canvas = document.createElement("canvas");
-                canvas.width = 43;
-                canvas.height = 43;
+                canvas.width = frameSize[0];
+                canvas.height = frameSize[1];
                 var context = canvas.getContext("2d");
-                context.drawImage(sheet, y * 43, x * 43, 43, 43, 0, 0, canvas.width, canvas.height);
+                context.drawImage(sheet, y * frameSize[1], x * frameSize[0], frameSize[0], frameSize[1], 0, 0, canvas.width, canvas.height);
                 if (!isCanvasBlank(canvas)) {
                     var img = new Image;
                     img.src = canvas.toDataURL();
@@ -707,53 +712,68 @@ function getImageData(source, callback) {
 }
 
 
+function digitToHex(digit) {
+  const h = Number(digit).toString(16);
+  return h.length === 1 ? `0${h}` : h;
+}
+
 /**
  * Generate and returns a directives string to form the given image.
  * @param {object} image - Image to create directives for.
  * @returns {string} Formatted directives string.
  */
 function generateDirectives(image) {
-    if (image == null)
-        return;
+  if (image == null)
+    return;
 
-    // Draw the selected image on a canvas, to fetch the pixel data.
-    var canvas = document.createElement("canvas");
-    canvas.width = 43;
-    canvas.height = 43;
+  // Draw the selected image on a canvas, to fetch the pixel data.
+  var canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
 
-    var canvasContext = canvas.getContext("2d");
+  var canvasContext = canvas.getContext("2d");
 
-    // Flip image upside down, to compensate for the 'inverted' y axis.
-    canvasContext.translate(0, image.height);
-    canvasContext.scale(1, -1);
-    canvasContext.drawImage(image, 0, 0, 43, 43);
-    canvasContext.scale(1, 1);
+  // Flip image upside down, to compensate for the 'inverted' y axis.
+  canvasContext.translate(0, image.height);
+  canvasContext.scale(1,-1);
+  canvasContext.drawImage(image, 0, 0, image.width, image.height);
+  canvasContext.scale(1,1);
 
-    var drawables = "?crop;0;0;2;2?replace;fff0=fff;0000=fff?setcolor=fff" +
-        "?blendmult=/objects/outpost/customsign/signplaceholder.png" +
-        "?replace;01000101=01000100;02000101=2B000100?replace;01000201=01002B00;02000201=2B002B00" +
-        "?scale=43?crop=0;0;43;43";
 
-    drawables += "?replace";
+  const r = digitToHex(image.width - 1);
+  const t = digitToHex(image.height - 1);
 
-    var imageData = canvasContext.getImageData(0, 0, 43, 43).data;
+  const bottomRight = `${r}010000`;
+  const topLeft = `0001${t}00`;
+  const topRight = `${r}01${t}00`;
 
-    for (var x = 0; x < 43; x++) {
-        for (var y = 0; y < 43; y++) {
-            var R = imageData[x * 4 + y * 43 * 4];
-            var G = imageData[x * 4 + y * 43 * 4 + 1];
-            var B = imageData[x * 4 + y * 43 * 4 + 2];
-            var A = imageData[x * 4 + y * 43 * 4 + 3];
-            if (A == 0)
-                continue;
+  var drawables = "?setcolor=fff?replace;fff0=fff?crop;0;0;2;2" +
+    "?blendmult=/items/active/weapons/protectorate/aegisaltpistol/beamend.png;0;0" +
+    `?replace;a355c0a5=00010000;a355c07b=${bottomRight};ffffffa5=${topLeft};ffffff7b=${topRight}` +
+    `?scale=${image.width};${image.height}` +
+    `?crop;1;1;${image.width + 1};${image.height + 1}` +
+    "?replace";
 
-            drawables += ";" + pad(x.toString(16), 2) + "00" + pad(y.toString(16), 2) + "00=" + colorToHex([R, G, B, A]);
-        }
+  var imageData = canvasContext.getImageData(0, 0, image.width, image.height).data;
+
+  for (var x = 0; x < image.width; x++) {
+    for (var y = 0; y < image.height; y++) {
+      var R = imageData[x * 4 + y * image.width * 4];
+      var G = imageData[x * 4 + y * image.width * 4 + 1];
+      var B = imageData[x * 4 + y * image.width * 4 + 2];
+      var A = imageData[x * 4 + y * image.width * 4 + 3];
+      if (A == 0)
+          continue;
+
+      drawables += ";" + pad(x.toString(16), 2) + "01" + pad(y.toString(16), 2) + "00=" + colorToHex([R, G, B, A]);
     }
-    return drawables;
+  }
+
+  return drawables;
 }
 
-/**
+
+/** @deprecated
  * Generate and returns an emoteDirective string to form the given spritesheet.
  * Thanks to NeetleBoy for his hard work.
  * @param {ImageData} templateData - ImageData of the template
@@ -763,8 +783,8 @@ function generateEmoteDirective(race, templateData) {
 
     // Draw the selected image on a canvas, to fetch the pixel data.
     var canvas = document.createElement("canvas");
-    canvas.width = 387;
-    canvas.height = 344;
+    canvas.width = sheetSize[0];
+    canvas.height = sheetSize[1];
 
     var canvasContext = canvas.getContext("2d");
     canvasContext.drawImage(spritesheet, 0, 0);
@@ -775,7 +795,7 @@ function generateEmoteDirective(race, templateData) {
     directive += "?replace";
 
     for (var px = 0, ct = canvas.width * canvas.height * 4; px < ct; px += 4) {
-        var frame = sheetPieces[Math.floor(px / 4 / 43 / 43 / 9)][Math.floor(px / 4 / 43 % 9)];
+        var frame = sheetPieces[Math.floor(px / 4 / frameSize[0] / frameSize[1] / 9)][Math.floor(px / 4 / frameSize[0] % 9)];
 		
         if (frame != null) {
             var r = imageData[px];
