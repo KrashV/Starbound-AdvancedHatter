@@ -1,1 +1,3 @@
-- Fixed freezing the emote on turning away if the emote was not present in the different head orientation
+- Removed hasiboundlite support. Use OpenStarbound
+- Entirely new interface for managing your head
+- Added support for multiple hats processing (OSB cosmetic slots included)

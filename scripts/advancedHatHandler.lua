@@ -1,136 +1,114 @@
 function init()
 
-  self.previousEmote = "idle"
-  self.previousPosition = world.entityPosition(player.id())
-  self.previousDirection = "none"
-  
-	local hairGroups = {
-		human = {
-			hairType = "male54",
-			facialHairType = "male54",
-			facialHairGroup = "hair"
-		},
-		floran = {
-			hairType = "11",
-			facialHairType = "11",
-			facialHairGroup = "hair"
-		},
-		hylotl = {
-			hairType = "20",
-			facialHairType = "20",
-			facialHairGroup = "hair"
-		},
-		avian = {
-			hairType = "20",
-			facialHairType = "1",
-			facialHairGroup = "fluff"
-		},
-		glitch = {
-			hairType = "0",
-			facialHairType = "0",
-			facialHairGroup = "hair"
-		},
-		apex = {
-			hairType = "1",
-			facialHairType = "1",
-			facialHairGroup = "beardmale"
-		},
-		novakid = {
-			hairType = "male0",
-			facialHairType = "0",
-			facialHairGroup = "brand"
-		}
-	}
+  self.OSBSupport = not not _ENV["player"]["setFacialHairType"]
+
+	function initHead(toResetInnerDirectives)
+    if toResetInnerDirectives and self.OSBSupport then
+      resetInnerDirectives()
+    end
+
+		local head = player.getProperty("animatedHead")
+		self.innerHead = head and self.OSBSupport and root.assetJson("/animatedhats/" .. head .. ".json") or nil
+		self.animationLayer = player.getProperty("animatedHeadLayer", "FacialHair")
+		self.previousEmote = player.currentEmote and self.emotes[player.currentEmote():lower()] or "idle"
+		self.previousDirection = "none"
+	end
+
 
   self.emotes = {
-		idle = "idle",
-		blink = "blink",
-		wink = "wink",
-		happy = "happy",
-		sleep = "blink",
-		sad = "sad",
-		blabber = "blabber",
-		shout = "shout",
-		neutral = "neutral",
-		annoyed = "annoyed",
-		laugh = "laugh",
-		oh = "surprised",
-		oooh = "shocked",
-		eat = "shout"
+    idle = "idle",
+    blink = "blink",
+    wink = "wink",
+    happy = "happy",
+    sleep = "blink",
+    sad = "sad",
+    blabber = "blabber",
+    blabbering = "blabber",
+    shout = "shout",
+    neutral = "neutral",
+    annoyed = "annoyed",
+    laugh = "laugh",
+    oh = "surprised",
+    oooh = "shocked",
+    eat = "shout"
   }
 
+  self.hatSlots = {
+    "innerHead",
+    "head",
+    "headCosmetic"
+  }
+
+  if renderer then  --OSB check
+    for i = 1, 12 do 
+      table.insert(self.hatSlots, "cosmetic" .. i)
+    end
+  end
+
+  -- Since emote directives are applied to a spritesheet rather than to a singular frame, we need some extra workarounds
+  self.directivesStump = "?crop=0;0;1;1;?border=1;FFFFFF?scale=43;"
   self.aliases = root.assetJson("/humanoid/emote.frames").aliases
-	local species = player.species()
 
-	local head = player.getProperty("animatedHead")
-	self.mode = _ENV["player"]["setFacialHairType"] and "StarExtentions" or _ENV["_star_player"] and "hasiboundlite" or nil
-	self.innerHead = head and self.mode and root.assetJson("/animatedhats/" .. head .. ".json") or nil
 
-	if self.innerHead and hairGroups[species] then
-		if self.mode == "hasiboundlite" then
-			_star_player():set_hair_type(hairGroups[species].hairType)
-			_star_player():set_facialHair_group(hairGroups[species].facialHairGroup)
-			_star_player():set_facialHair_type(hairGroups[species].facialHairType)
-		elseif self.mode == "StarExtentions" then
-			player.setHairType(hairGroups[species].hairType)
-			player.setFacialHairGroup(hairGroups[species].facialHairGroup)
-			player.setFacialHairType(hairGroups[species].facialHairType)
-		end
-	end
+  initHead()
+
+  message.setHandler("reset_advanced_hatter", function(_, isLocal)
+    if isLocal then
+      initHead(true)
+    end
+  end)
 end
 
 
-function update(dt)	
+function update(dt)
 	-- Retrieve current parameters --
-	
-	local mode, slotName, currentHat = getHeadItem()
-	
-	if currentHat and currentHat.parameters.advancedHatter then
-		local currentEmoteFrame = getEmote()
-		local currentEmote = currentEmoteFrame:match("[^%d%W]+")
-		local currentDirection = mcontroller.facingDirection()
-		local currentDirectionName = currentDirection > 0 and "default" or "reverse"
-  
-		local parms = currentHat.parameters.advancedHatter
+  local currentEmoteFrame = getEmote()
+  local currentEmote = currentEmoteFrame:match("[^%d%W]+")
+  local currentDirection = mcontroller.facingDirection()
+  local currentDirectionName = currentDirection > 0 and "default" or "reverse"
 
-		if currentDirection ~= self.previousDirection or currentEmoteFrame ~= self.previousEmote then
-			local directives = getFrame(parms, currentDirection, currentEmoteFrame)
+  for _, slotName in ipairs(self.hatSlots) do 
+    local currentHat = getHeadItem(slotName)
+    
+    if currentHat and currentHat.parameters.advancedHatter then
+      local parms = currentHat.parameters.advancedHatter
+      if currentDirection ~= self.previousDirection or currentEmoteFrame ~= self.previousEmote then
+        local directives = getFrame(parms, currentDirection, currentEmoteFrame)
 
-			if directives then
-				if mode == "hasiboundlite" then
-					_star_player():set_facialHair_directives(directives)
-				elseif mode == "StarExtentions" then
-					player.setFacialHairDirectives(directives)
-				else
-					currentHat.parameters.directives = directives
-					player.setEquippedItem(slotName, currentHat)
-				end
-			end
+        if directives then
+          if slotName == "innerHead" then
+			      directives = self.directivesStump .. directives
 
-			self.previousEmote = currentEmoteFrame
-			self.previousDirection = currentDirection
-		end
-	end
+            if self.animationLayer == "FacialHair" then
+              player.setFacialHairDirectives(directives)
+            elseif self.animationLayer == "Emote" then
+              player.setEmoteDirectives(directives)
+            elseif self.animationLayer == "Hair" then
+              player.setHairDirectives(directives)
+            end
+          else
+            currentHat.parameters.directives = directives
+            player.setEquippedItem(slotName, currentHat)
+          end
+        end
+      end
+    end
+  end
+
+  self.previousEmote = currentEmoteFrame
+  self.previousDirection = currentDirection
 end
 
 function getVersion(parms)
 	return parms.version or 1
 end
 
-function getHeadItem(parms)
-	local slotName = "headCosmetic"
-	local currentHat = player.equippedItem(slotName)
-	
-	if not currentHat or not currentHat.parameters.advancedHatter then
-		slotName = "head"
-		currentHat = player.equippedItem(slotName)
-	end
-
-	if not currentHat or not currentHat.parameters.advancedHatter then 
-		if self.innerHead then return self.mode, _, self.innerHead end
-	else
-		return "item", slotName, currentHat
-	end
+function getHeadItem(slotName)
+  if slotName == "innerHead" then
+    if self.innerHead then return self.innerHead end
+  else
+    return player.equippedItem(slotName)
+  end
 end
 
 function getEmote()
@@ -157,10 +135,7 @@ function getFrame(parms, direction, emoteFrame)
 	end
 	
 	local emote = emoteFrame:match("[^%d%W]+")
-	local frame = tonumber(emoteFrame:match("%d+"))
-	
-	-- Bugfix
-	if not frame then frame = 1 end
+	local frame = tonumber(emoteFrame:match("%d+")) or 1
 
 	if getVersion(parms) == 2 then
 		if not parms.reverse then
@@ -194,4 +169,19 @@ function getFrame(parms, direction, emoteFrame)
 	end
 
 	return directives
+end
+
+function resetInnerDirectives()
+  local hideDirective = "?crop=0;0;0;0;"
+  if player.hairDirectives():find(self.directivesStump, nil, true) then
+    player.setHairDirectives(hideDirective)
+  end
+
+  if player.emoteDirectives():find(self.directivesStump, nil, true) then
+    player.setEmoteDirectives(hideDirective)
+  end
+
+  if player.facialHairDirectives():find(self.directivesStump, nil, true) then
+    player.setFacialHairDirectives(hideDirective)
+  end
 end
